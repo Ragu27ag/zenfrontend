@@ -1,0 +1,6 @@
+.main-div{
+    display: flex;
+    flex-flow: wrap;
+    gap: 24px;
+    margin-top: 20px;
+}
