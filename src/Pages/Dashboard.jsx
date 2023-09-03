@@ -2,6 +2,7 @@ import React from "react";
 import BarComponent from "../Components/BarComponent";
 import PieComponent from "../Components/PieComponent";
 import DoughnutComponent from "../Components/DoughnutComponent";
+import MockGraph from "../Components/MockGraph";
 
 const Dashboard = () => {
   return (
@@ -17,8 +18,15 @@ const Dashboard = () => {
         <BarComponent />
         <PieComponent />;
       </div>
-      <div>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-around",
+        }}
+      >
         <DoughnutComponent />
+        <MockGraph />
       </div>
     </>
   );
