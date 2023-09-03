@@ -259,12 +259,15 @@ const Main = () => {
                     {/* <br /> */}
                     <button
                       style={{
-                        width: "inherit",
+                        width: "100%",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
+
+                        height: "100%",
                       }}
                       onClick={handleLogout}
+                      onMouseOut={() => setMenu(false)}
                     >
                       logout
                     </button>
