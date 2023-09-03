@@ -58,7 +58,7 @@ const ZClasses = () => {
 
   const navigate = useNavigate();
 
-  const [classes, setClasses] = useState(1);
+  const [classes, setClasses] = useState("1");
 
   const [arr, setArr] = useState([]);
 

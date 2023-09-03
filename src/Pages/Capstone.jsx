@@ -23,7 +23,7 @@ const Capstone = () => {
     );
     setdata(res.data);
     setResult(resultData.data);
-  }, [setdata]);
+  }, [setdata, User.email]);
 
   console.log(result);
 

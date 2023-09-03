@@ -152,7 +152,7 @@ const Main = () => {
       navigate("/");
     } else if (text === "Tasks") {
       navigate("/task");
-    } else if (text === "Webcode") {
+    } else if (text === "Webcode" || text === "WebcodeCapstone") {
       navigate("/webcode");
     } else if (text === "Capstone") {
       navigate("/capstone");

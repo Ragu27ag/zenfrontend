@@ -23,7 +23,7 @@ const Webcode = () => {
     );
     setdata(res.data);
     setResult(resultData.data);
-  }, [setdata, setResult]);
+  }, [User.email, setdata, setResult]);
 
   const getAdminData = useCallback(async () => {
     const res = await backendInstance.get("/webcapsubmit");

@@ -27,7 +27,7 @@ const Tasks = () => {
   const adminData = useCallback(async () => {
     const { data } = await backendInstance.get(`/tasks`);
     setAllTasks(data);
-  }, [User.email, setAllTasks]);
+  }, [setAllTasks]);
 
   useEffect(() => {
     if (Object.keys(User).length === 0) {

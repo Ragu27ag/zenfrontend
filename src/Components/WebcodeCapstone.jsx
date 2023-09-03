@@ -7,12 +7,10 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import backendInstance from "../Axios/axios";
 import SnackBarComp from "./SnackBarComp";
-import { Link } from "react-router-dom";
 
 const WebcodeCapstone = ({ data, User, result, handleClose }) => {
   const [openBox, setOpenBox] = useState(false);
   const [type, setType] = React.useState("");
-  const [reqArr, setReqArr] = React.useState([]);
   const [sub, setSub] = React.useState(true);
 
   const terms = [
@@ -59,7 +57,6 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
   };
 
   console.log(descObj);
-  console.log(reqArr);
 
   const handleChange = (event) => {
     setType(event.target.value);
@@ -209,9 +206,9 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
                   </p>
 
                   <div>
-                    {result.map((res) => {
-                      if (res.title === val.title) {
-                        return (
+                    {result.map(
+                      (res) =>
+                        res.title === val.title && (
                           <p>
                             {" "}
                             Marks :
@@ -224,9 +221,8 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
                               {res.marks === "" ? "-" : res.marks}
                             </span>
                           </p>
-                        );
-                      }
-                    })}
+                        )
+                    )}
                     <p style={{ backgroundColor: "#FF9828", color: "#555A8F" }}>
                       {val.type}
                     </p>

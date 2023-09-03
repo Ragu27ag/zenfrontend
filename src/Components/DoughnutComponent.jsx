@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Chart as ChartJs, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import backendInstance from "../Axios/axios";
 import { Doughnut } from "react-chartjs-2";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 const DoughnutComponent = () => {
   const User = useMemo(

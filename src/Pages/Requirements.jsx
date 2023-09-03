@@ -19,7 +19,6 @@ const Requirements = () => {
   const [data, setdata] = useState([]);
   const [result, setResult] = useState([]);
   const [open, setOpen] = useState(false);
-  const [applied, setApplied] = useState([]);
 
   const [openSnack, setOpenSnack] = React.useState(false);
 
@@ -36,10 +35,9 @@ const Requirements = () => {
 
   const getData = useCallback(async () => {
     const res = await backendInstance.get("/requirements");
-    const resData = await backendInstance.get(`/applicationlist/${User.email}`);
-    setApplied(resData.data);
+    // const resData = await backendInstance.get(`/applicationlist/${User.email}`);
     setdata(res.data);
-  }, [setdata, setApplied, User.email]);
+  }, [setdata]);
 
   const getAdminData = useCallback(async () => {
     const resultData = await backendInstance.get(`/applicationlist`);
