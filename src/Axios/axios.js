@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const backendInstance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: REACT_APP_URL,
   timeout: 5000,
 });
 
