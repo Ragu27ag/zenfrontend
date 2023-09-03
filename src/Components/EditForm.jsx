@@ -33,6 +33,7 @@ const EditForm = ({ arr, open, handleClose, getClass, getAdditionalClass }) => {
     day: yup
       .number()
       .min(1, "Days should be greater than 1 day")
+      .max(40, "Roadmap sessions should be greater than 40 days")
       .required("Enter day"),
     title: yup.string().required("Enter the title"),
     date: yup.string().required("Enter the date"),
@@ -68,7 +69,7 @@ const EditForm = ({ arr, open, handleClose, getClass, getAdditionalClass }) => {
         }
       });
 
-      if (arr.length === 40) {
+      if (Number(data.day) > arr.length) {
         alert(
           "Roadmap sessions are full try adding this as additional session"
         );
