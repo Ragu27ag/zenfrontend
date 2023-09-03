@@ -23,7 +23,6 @@ const MockGraph = () => {
   const navigate = useNavigate();
 
   const [taskData, setTaskData] = useState([]);
-  const [classData, setClassData] = useState([]);
 
   const getData = useCallback(async () => {
     const resTask = await backendInstance.get(`/mock/${User.email}`);
