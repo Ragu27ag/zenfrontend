@@ -127,7 +127,8 @@ const ZClasses = () => {
     console.log(no);
     setClasses(no);
     for (var i = 0; i < tasks.length; i++) {
-      if (Number(tasks[i].day) === no) {
+      if (tasks[i].day === no) {
+        console.log(Number(tasks[i].day));
         setCurrTask(tasks[i].url);
         break;
       } else {
