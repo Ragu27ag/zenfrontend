@@ -14,16 +14,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import SnackBarComp from "./SnackBarComp";
 
-const EditForm = ({
-  arr,
-  open,
-  handleClose,
-  editData,
-  editAddData,
-  type,
-  getClass,
-  getAdditionalClass,
-}) => {
+const EditForm = ({ arr, open, handleClose, getClass, getAdditionalClass }) => {
   const [openSnack, setOpenSnack] = React.useState(false);
 
   const [dataMsg, setDataMsg] = React.useState("");
@@ -68,8 +59,8 @@ const EditForm = ({
       document.getElementById("submitbutt").disabled = true;
       let allow = true;
       console.log(data);
-      arr.map((cla) => {
-        if (cla.day == data.day && data.type === "roadmap") {
+      arr.forEach((cla) => {
+        if (cla.day === data.day && data.type === "roadmap") {
           alert(
             "Class already exist either delete the existing one or edit the existing one"
           );

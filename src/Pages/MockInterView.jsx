@@ -28,7 +28,7 @@ const MockInterView = () => {
   const navigate = useNavigate();
 
   const [data, setdata] = useState([]);
-  const [result, setResult] = useState([]);
+  // const [_result, setResult] = useState([]);
   const [detailss, setDetails] = useState({});
   const [open, setOpen] = React.useState(true);
   const divRef = useRef(null);
@@ -37,12 +37,11 @@ const MockInterView = () => {
     const res = await backendInstance.get(`/mock/${User.email}`);
     setdata(res.data);
     // setResult({ ...data });
-  }, [setdata]);
+  }, [setdata, User.email]);
 
-  const getAdminData = useCallback(async () => {
-    const resultData = await backendInstance.get(`/mock`);
-    setResult(resultData.data);
-  }, [setResult]);
+  // const getAdminData = useCallback(async () => {
+  //   const resultData = await backendInstance.get(`/mock`);
+  // }, []);
 
   useEffect(() => {
     if (Object.keys(User).length === 0) {
@@ -51,10 +50,10 @@ const MockInterView = () => {
       if (User.role === "student") {
         getData();
       } else {
-        getAdminData();
+        // getAdminData();
       }
     }
-  }, [User, navigate, getData, getAdminData]);
+  }, [User, navigate, getData]);
 
   const [openSnack, setOpenSnack] = React.useState(false);
 
@@ -65,7 +64,7 @@ const MockInterView = () => {
     setDataMsg("Added Successfully");
     setOpenSnack(true);
     getData();
-    getAdminData();
+    // getAdminData();
   };
 
   const handleDetails = (lev) => {

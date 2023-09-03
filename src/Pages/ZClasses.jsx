@@ -72,15 +72,15 @@ const ZClasses = () => {
 
   const [currTask, setCurrTask] = useState(null);
 
-  const [type, setType] = React.useState("");
+  // const [type, setType] = React.useState("");
 
   const [dataMsg, setDataMsg] = React.useState("");
 
   const [open, setOpen] = React.useState(false);
 
-  const [editData, setEditData] = useState({});
+  // const [editData, setEditData] = useState({});
 
-  const [editAddData, setEditAddData] = useState({});
+  // const [editAddData, setEditAddData] = useState({});
 
   const [openSnack, setOpenSnack] = React.useState(false);
 
@@ -127,7 +127,7 @@ const ZClasses = () => {
     console.log(no);
     setClasses(no);
     for (var i = 0; i < tasks.length; i++) {
-      if (tasks[i].day == no) {
+      if (Number(tasks[i].day) === no) {
         setCurrTask(tasks[i].url);
         break;
       } else {
@@ -190,16 +190,16 @@ const ZClasses = () => {
     document.getElementById("deletebutt").disabled = false;
   };
 
-  const handleEdit = async (data) => {
-    setType("edit");
-    setEditData({ ...data });
-    handleClickOpen();
-  };
+  // const handleEdit = async (data) => {
+  //   setType("edit");
+  //   setEditData({ ...data });
+  //   handleClickOpen();
+  // };
 
-  const handleAddtionalEdit = async (data) => {
-    setEditAddData({ ...data });
-    handleClickOpen();
-  };
+  // const handleAddtionalEdit = async (data) => {
+  //   setEditAddData({ ...data });
+  //   handleClickOpen();
+  // };
 
   const handleClick = useCallback(
     (msg) => {
@@ -250,7 +250,6 @@ const ZClasses = () => {
               backgroundColor: "buttcolor.main",
               marginTop: "10px",
               marginRight: "10px",
-              marginRight: "10px",
               height: "30px",
               fontSize: "15px",
               color: "white",
@@ -273,7 +272,7 @@ const ZClasses = () => {
         >
           {!addOpen &&
             arr
-              .filter((val) => val.day == classes)
+              .filter((val) => val.day === classes)
               .map((data) =>
                 data.day === "" ? (
                   <p>"Classes not assigned"</p>
@@ -521,7 +520,7 @@ const ZClasses = () => {
                         val !== "16" &&
                         val !== "26" &&
                         val !== "36") ||
-                      val == 40 ? (
+                      val === "40" ? (
                         <hr
                           style={{
                             width: "30px",
@@ -551,7 +550,7 @@ const ZClasses = () => {
                             }}
                           ></div>
                         </>
-                      ) : val % 5 === 0 && val % 2 !== 0 && val != 40 ? (
+                      ) : val % 5 === 0 && val % 2 !== 0 && val !== "40" ? (
                         <div
                           style={{
                             borderLeft: "thick solid #7E8E9F",
@@ -618,9 +617,6 @@ const ZClasses = () => {
               arr={arr}
               open={open}
               handleClose={handleClose}
-              editData={editData}
-              editAddData={editAddData}
-              type={type}
               getAddtionalClass={getAddtionalClass}
               getClass={getClass}
             />

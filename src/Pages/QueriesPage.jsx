@@ -13,8 +13,8 @@ const QueriesPage = () => {
   const navigate = useNavigate();
   const [queries, setQuery] = useState([]);
   const [adminQueries, setAdminQuery] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [openQuery, setOpenQuery] = useState({});
+  // const [open, setOpen] = useState(false);
+  // const [openQuery, setOpenQuery] = useState({});
 
   const queryData = useCallback(async () => {
     const { data } = await backendInstance.get(`/queries/${User.email}`);
@@ -24,7 +24,7 @@ const QueriesPage = () => {
   const adminQueryData = useCallback(async () => {
     const { data } = await backendInstance.get(`/queries`);
     setAdminQuery(data);
-  }, [User.email, setAdminQuery]);
+  }, [setAdminQuery]);
 
   console.log(queries);
 
@@ -38,16 +38,16 @@ const QueriesPage = () => {
         adminQueryData();
       }
     }
-  }, [User, navigate, queryData]);
+  }, [User, navigate, queryData, adminQueryData]);
 
   const handleRedirect = () => {
     navigate("/queries/add");
   };
 
-  const handleOpen = (query) => {
-    setOpen(!open);
-    setOpenQuery({ ...query });
-  };
+  // const handleOpen = (query) => {
+  //   setOpen(!open);
+  //   setOpenQuery({ ...query });
+  // };
 
   const handleAssign = async (e, query) => {
     e.preventDefault();
@@ -65,7 +65,7 @@ const QueriesPage = () => {
       email: query.email,
     };
 
-    const res = await backendInstance.put("/queries", obj);
+    // const res = await backendInstance.put("/queries", obj);
   };
 
   return (
@@ -124,7 +124,7 @@ const QueriesPage = () => {
                 {open ? "Close" : "chat"}
               </Button> */}
             </div>
-            {open && query.quesId === openQuery.quesId && (
+            {/* {open && query.quesId === openQuery.quesId && (
               <div
                 style={{
                   margin: "5px",
@@ -154,7 +154,7 @@ const QueriesPage = () => {
                   </form>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         ))}
       </div>
@@ -202,7 +202,7 @@ const QueriesPage = () => {
                   Assigned to : {query.assignedTo}
                 </p>
               </div>
-              <form>
+              <form onSubmit={handleAssign}>
                 <label htmlFor="assigned">Assign to</label>
                 <br />
                 <input name="assigned" id="assigned" required />
