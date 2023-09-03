@@ -10,6 +10,7 @@ import { Button } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 import { useNavigate } from "react-router-dom";
 import backendInstance from "../Axios/axios";
+import SnackBarComp from "../Components/SnackBarComp";
 
 const AddQueries = () => {
   const User = useMemo(
@@ -18,6 +19,17 @@ const AddQueries = () => {
   );
   console.log(User.email);
   const navigate = useNavigate();
+
+  const [openSnack, setOpenSnack] = React.useState(false);
+
+  const [dataMsg, setDataMsg] = React.useState("");
+
+  const handleClick = () => {
+    console.log("opened");
+    setDataMsg("Added Successfully");
+    setOpenSnack(true);
+  };
+
   const validation = yup.object().shape({
     category: yup.string().required("Enter Category"),
     language: yup.string().required("Enter language"),
@@ -37,6 +49,7 @@ const AddQueries = () => {
     },
 
     onSubmit: async (data) => {
+      document.getElementById("submitbutt").disabled = true;
       let id = "ZEN" + Math.floor(1000 + Math.random() * 9000);
       const obj = {
         ...data,
@@ -50,9 +63,12 @@ const AddQueries = () => {
       console.log(res.data);
       if (res.data.msg === "Inserted Successfully") {
         document.getElementById("submitbutt").disabled = true;
-        queryForm.resetForm();
-        navigate("/queries");
+        handleClick();
+        setTimeout(() => navigate("/queries"), 4000);
+      } else {
+        document.getElementById("submitbutt").disabled = false;
       }
+      document.getElementById("submitbutt").disabled = false;
     },
 
     validationSchema: validation,
@@ -73,7 +89,14 @@ const AddQueries = () => {
         justifyContent: "center",
       }}
     >
-      <div style={{ border: "1px solid", padding: "10px" }}>
+      <div
+        style={{
+          border: "1px solid grey",
+          padding: "10px",
+          boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+          borderRadius: "8px",
+        }}
+      >
         <form onSubmit={queryForm.handleSubmit}>
           <p>Topic</p>
           <div style={{ display: "flex", justifyContent: "center" }}>
@@ -269,6 +292,7 @@ const AddQueries = () => {
             <Button
               sx={{ backgroundColor: "buttcolor.main" }}
               variant="contained"
+              onClick={() => navigate("/queries")}
             >
               Cancel
             </Button>
@@ -281,6 +305,11 @@ const AddQueries = () => {
             >
               Create
             </Button>
+            <SnackBarComp
+              openSnack={openSnack}
+              setOpenSnack={setOpenSnack}
+              dataMsg={dataMsg}
+            />
           </div>
         </form>
       </div>

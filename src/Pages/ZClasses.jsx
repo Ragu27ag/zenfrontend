@@ -1,10 +1,11 @@
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import backendInstance from "../Axios/axios.js";
-
-import "../CSS/ZClaases.css";
 import { useNavigate } from "react-router-dom";
+
+import EditForm from "../Components/EditForm.jsx";
+import SnackBarComp from "../Components/SnackBarComp.jsx";
+import backendInstance from "../Axios/axios.js";
 
 const ZClasses = () => {
   const classList = [
@@ -61,27 +62,83 @@ const ZClasses = () => {
 
   const [arr, setArr] = useState([]);
 
+  const [addArr, setAddArr] = useState([]);
+
+  const [addOpen, setAddOpen] = useState(false);
+
+  const [currAdd, setCurrAdd] = useState("");
+
+  const [tasks, setTasks] = useState([]);
+
+  const [currTask, setCurrTask] = useState(null);
+
+  const [type, setType] = React.useState("");
+
+  const [dataMsg, setDataMsg] = React.useState("");
+
+  const [open, setOpen] = React.useState(false);
+
+  const [editData, setEditData] = useState({});
+
+  const [editAddData, setEditAddData] = useState({});
+
+  const [openSnack, setOpenSnack] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(!open);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const getClass = useCallback(async () => {
     const res = await backendInstance.get("/classes");
     setArr(res.data);
-  }, []);
+  }, [setArr]);
+
+  const getAddtionalClass = useCallback(async () => {
+    const res = await backendInstance.get("/additionalClass");
+    setAddArr(res.data);
+  }, [setAddArr]);
+
+  const tasksData = useCallback(async () => {
+    const { data } = await backendInstance.get(`/tasks/${User.email}`);
+    setTasks(data);
+  }, [User.email, setTasks]);
 
   useEffect(() => {
     if (Object.keys(User).length === 0) {
       navigate("/login");
     } else {
+      if (User.role === "student") {
+        tasksData();
+      }
       getClass();
+      getAddtionalClass();
     }
-  }, [getClass, navigate, User]);
+  }, [getClass, navigate, User, tasksData, getAddtionalClass]);
 
-  console.log(classes);
+  console.log(tasks);
   console.log(arr);
 
   const handleClass = (no) => {
+    setAddOpen(false);
+    console.log(no);
     setClasses(no);
+    for (var i = 0; i < tasks.length; i++) {
+      if (tasks[i].day == no) {
+        setCurrTask(tasks[i].url);
+        break;
+      } else {
+        setCurrTask(null);
+      }
+    }
   };
+  console.log(currTask);
 
   const handleSubmit = async (e) => {
+    document.getElementById("submitbutt").disabled = true;
     e.preventDefault();
     console.log(e);
     let taskData = "";
@@ -103,13 +160,69 @@ const ZClasses = () => {
       email: User.email,
       url: taskData,
       submitted: `${taskDate}/${taskMonth}/${taskYear}`,
+      evaluated: false,
+      name: User.name,
     };
     console.log(obj);
     const res = await backendInstance.post("/task", obj);
+    if (res.data.msg === "Inserted Successfully") {
+      document.getElementById("submitbutt").disabled = false;
+      handleClick("Submitted Successfully ");
+    } else {
+      document.getElementById("submitbutt").disabled = false;
+    }
   };
 
+  const handleAdditional = (data) => {
+    setAddOpen(true);
+    setCurrAdd(data.title);
+  };
+
+  const handleDelete = async (data) => {
+    document.getElementById("deletebutt").disabled = true;
+
+    console.log(data);
+    const res = await backendInstance.post("/deleteClass", data);
+    if (res.data.msg === "Deleted Successfully") {
+      handleClick("Deleted Succesfully");
+      document.getElementById("deletebutt").disabled = false;
+    }
+    document.getElementById("deletebutt").disabled = false;
+  };
+
+  const handleEdit = async (data) => {
+    setType("edit");
+    setEditData({ ...data });
+    handleClickOpen();
+  };
+
+  const handleAddtionalEdit = async (data) => {
+    setEditAddData({ ...data });
+    handleClickOpen();
+  };
+
+  const handleClick = useCallback(
+    (msg) => {
+      console.log("opened");
+      setDataMsg(msg);
+      getClass();
+      getAddtionalClass();
+      tasksData();
+      setOpenSnack(true);
+    },
+    [getClass, getAddtionalClass, tasksData]
+  );
+
   return (
-    <div className="main-div">
+    <div
+      className="main-div"
+      style={{
+        display: "flex",
+        flexFlowflow: "wrap",
+        gap: "24px",
+        marginTop: "20px",
+      }}
+    >
       <Box
         sx={{
           flex: "1 1",
@@ -137,6 +250,7 @@ const ZClasses = () => {
               backgroundColor: "buttcolor.main",
               marginTop: "10px",
               marginRight: "10px",
+              marginRight: "10px",
               height: "30px",
               fontSize: "15px",
               color: "white",
@@ -152,75 +266,229 @@ const ZClasses = () => {
             flexWrap: "wrap",
             justifyContent: "space-between",
             borderRadius: "8px",
-            border: "2px solid",
+            border: "1px solid grey",
             marginTop: "5px",
+            boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
           }}
         >
-          {arr
-            .filter((val) => val.day == classes)
-            .map((data) => (
-              <div style={{ margin: "2px" }}>
-                <Typography variant="h5">
-                  Day - {data.day}&nbsp;
-                  {data.title}
-                </Typography>
-                <p>
-                  {data.date} {data.time}
-                </p>
-                <p>Contents</p>
-                {data.contents.map((con) => (
-                  <div style={{ paddingLeft: "12px" }}>
-                    <li>{con}</li>
+          {!addOpen &&
+            arr
+              .filter((val) => val.day == classes)
+              .map((data) =>
+                data.day === "" ? (
+                  <p>"Classes not assigned"</p>
+                ) : (
+                  <div style={{ margin: "2px" }}>
+                    <Typography sx={{ color: "head.main" }} variant="h5">
+                      Day - {data.day}&nbsp;
+                      {data.title}
+                    </Typography>
+                    <p style={{ color: "#7E8E9F" }}>
+                      ON : {data.date} From : {data.time}
+                    </p>
+                    <p style={{ color: "#7E8E9F" }}>Contents</p>
+                    {data.contents.split("\n").map((con) => (
+                      <div style={{ paddingLeft: "12px" }}>
+                        <li style={{ color: "#7E8E9F" }}>{con}</li>
+                      </div>
+                    ))}
+                    <p style={{ color: "#7E8E9F" }}>Pre-read</p>
+                    {data.preread.split("\n").map((con) => (
+                      <div style={{ paddingLeft: "12px" }}>
+                        <li style={{ color: "#7E8E9F" }}>{con}</li>
+                      </div>
+                    ))}
+                    {User.role === "student" && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          justifyContent: "space-between",
+                          marginTop: "5px",
+                        }}
+                      >
+                        {" "}
+                        <div
+                          style={{
+                            margin: "10px",
+                          }}
+                        >
+                          {data.activities !== "" ? (
+                            <>
+                              <Typography
+                                sx={{ color: "head.main" }}
+                                variant="h6"
+                              >
+                                Activities
+                              </Typography>
+                              <p style={{ color: "#7E8E9F" }}>
+                                {data.activities}
+                              </p>
+                              <form onSubmit={handleSubmit}>
+                                <input
+                                  name="task"
+                                  id="task"
+                                  type="url"
+                                  style={{ width: "90%", margin: "5px" }}
+                                  defaultValue={
+                                    currTask !== null ? currTask : ""
+                                  }
+                                  required
+                                />
+                                <br />
+                                <br />
+
+                                {currTask === null ? (
+                                  <div style={{ textAlign: "end" }}>
+                                    <Button
+                                      type="submit"
+                                      variant="contanied"
+                                      sx={{
+                                        backgroundColor: "secondary.main",
+                                        color: "white",
+                                        margin: "5px",
+                                        "&.MuiButtonBase-root:hover": {
+                                          backgroundColor: "secondary.main",
+                                        },
+                                      }}
+                                      id="submitbutt"
+                                    >
+                                      Submit
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <span style={{ backgroundColor: "#FF9A28" }}>
+                                    Submitted
+                                  </span>
+                                )}
+                              </form>
+                            </>
+                          ) : (
+                            <div>No Activities</div>
+                          )}
+                        </div>
+                      </Box>
+                    )}
+                    {User.role === "admin" && (
+                      <>
+                        {" "}
+                        <div style={{ marginTop: "15px" }}>
+                          {/* <Button
+                          size="small"
+                          variant="contained"
+                          sx={{ backgroundColor: "buttcolor.main" }}
+                          onClick={() => handleEdit(data)}
+                        >
+                          edit
+                        </Button>{" "} */}
+                          &nbsp;&nbsp;
+                          <Button
+                            size="small"
+                            variant="contained"
+                            sx={{
+                              backgroundColor: "buttcolor.main",
+                              marginBottom: "5px",
+                            }}
+                            id="deletebutt"
+                            onClick={() => handleDelete(data)}
+                          >
+                            delete
+                          </Button>{" "}
+                        </div>
+                      </>
+                    )}
                   </div>
-                ))}
-              </div>
-            ))}
+                )
+              )}
+          {addOpen &&
+            addArr
+              .filter((add) => add.title === currAdd)
+              .map((data) => (
+                <div style={{ margin: "2px" }}>
+                  <Typography variant="h5">
+                    Day - {data.day}&nbsp;
+                    {data.title}
+                  </Typography>
+                  <p style={{ color: "#7E8E9F" }}>
+                    {data.date} {data.time}
+                  </p>
+                  {User.role === "admin" && (
+                    <>
+                      {" "}
+                      <div style={{ marginTop: "15px" }}>
+                        {/* <Button
+                          size="small"
+                          variant="contained"
+                          sx={{ backgroundColor: "buttcolor.main" }}
+                          onClick={() => handleAddtionalEdit(data)}
+                        >
+                          edit
+                        </Button> */}
+                        &nbsp;&nbsp;
+                        <Button
+                          size="small"
+                          variant="contained"
+                          sx={{
+                            backgroundColor: "buttcolor.main",
+                            marginBottom: "5px",
+                          }}
+                          onClick={() => handleDelete(data)}
+                          id="deleteAddiButt"
+                        >
+                          delete
+                        </Button>
+                      </div>{" "}
+                    </>
+                  )}
+                </div>
+              ))}
         </Box>
         <Box
           sx={{
             display: "flex",
             flexWrap: "wrap",
             justifyContent: "space-between",
-            height: "200px",
+
             borderRadius: "8px",
-            border: "2px solid",
+
             marginTop: "5px",
           }}
         >
-          <div style={{ margin: "10px", width: "100%", border: "2px solid" }}>
-            <Typography variant="h6">Activities</Typography>
-            <form onSubmit={handleSubmit}>
-              <input
-                name="task"
-                id="task"
-                type="url"
-                style={{ width: "50%", margin: "5px" }}
-              />
-              <br />
-              <br />
-              <div style={{ textAlign: "end" }}>
-                <Button
-                  type="submit"
-                  sx={{ backgroundColor: "secondary.main", margin: "5px" }}
-                >
-                  Submit
-                </Button>
-              </div>
-            </form>
-          </div>
+          {User.role === "admin" && (
+            <>
+              <Button
+                variant="contanied"
+                sx={{
+                  backgroundColor: "buttcolor.main",
+                  color: "black",
+                  margin: "5px",
+                  "&.MuiButtonBase-root:hover": {
+                    backgroundColor: "buttcolor.main",
+                  },
+                }}
+                onClick={handleClickOpen}
+                disableRipple
+              >
+                Add
+              </Button>
+            </>
+          )}
         </Box>
       </Box>
       <Box>
         <Box
           sx={{
-            border: "2px solid",
+            border: "1px solid grey",
             height: "450px",
             width: "310px",
             borderRadius: "8px",
+            boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
           }}
         >
           <div>
-            <Typography variant="h6">Sessions Roadmap</Typography>
+            <Typography sx={{ color: "head.main" }} variant="h6">
+              Sessions Roadmap
+            </Typography>
           </div>
           <Box
             sx={{
@@ -242,7 +510,7 @@ const ZClasses = () => {
                       }}
                       size="small"
                       variant="contained"
-                      disableRipple="true"
+                      disableRipple
                       onClick={() => handleClass(val)}
                     >
                       {val}
@@ -258,24 +526,24 @@ const ZClasses = () => {
                           style={{
                             width: "30px",
                             height: "5px",
-                            backgroundColor: "grey",
+                            backgroundColor: "#7E8E9F",
                             marginTop: "12px",
                           }}
                         />
-                      ) : val % 5 === 0 && val % 2 === 0 && val != 40 ? (
+                      ) : val % 5 === 0 && val % 2 === 0 && val !== 40 ? (
                         <>
                           {" "}
                           <hr
                             style={{
                               width: "30px",
                               height: "5px",
-                              backgroundColor: "grey",
+                              backgroundColor: "#7E8E9F",
                               marginTop: "12px",
                             }}
                           />{" "}
                           <div
                             style={{
-                              borderLeft: "thick solid grey",
+                              borderLeft: "thick solid #7E8E9F",
                               height: "20px",
                               position: "absolute",
                               left: "10px",
@@ -286,7 +554,7 @@ const ZClasses = () => {
                       ) : val % 5 === 0 && val % 2 !== 0 && val != 40 ? (
                         <div
                           style={{
-                            borderLeft: "thick solid grey",
+                            borderLeft: "thick solid #7E8E9F",
                             height: "20px",
                             position: "absolute",
                             left: "10px",
@@ -315,14 +583,48 @@ const ZClasses = () => {
         </Box>
         <Box
           sx={{
-            border: "2px solid",
-            height: "400px",
+            border: "1px solid grey",
             width: "300px",
             marginTop: "10px",
+            boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+            borderRadius: "8px",
           }}
         >
-          <div></div>
-          <div></div>
+          <Typography sx={{ color: "head.main" }} variant="h6">
+            Additional sessions
+          </Typography>
+          {addArr.map((data) => (
+            <div
+              style={{ margin: "2px" }}
+              onClick={() => handleAdditional(data)}
+            >
+              <Typography variant="h5">
+                Day - {data.day}&nbsp;
+                {data.title}
+              </Typography>
+              <p style={{ color: "#7E8E9F" }}>
+                on {data.date} from {data.time}
+              </p>
+            </div>
+          ))}
+          <div>
+            {" "}
+            <SnackBarComp
+              openSnack={openSnack}
+              setOpenSnack={setOpenSnack}
+              dataMsg={dataMsg}
+            />
+            <EditForm
+              arr={arr}
+              open={open}
+              handleClose={handleClose}
+              editData={editData}
+              editAddData={editAddData}
+              type={type}
+              getAddtionalClass={getAddtionalClass}
+              getClass={getClass}
+            />
+          </div>
         </Box>
       </Box>
     </div>

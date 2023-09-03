@@ -1,0 +1,10 @@
+.first-div{
+    border: 1px solid black;
+}
+
+.first-div-1{
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    border: 2px solid;
+}

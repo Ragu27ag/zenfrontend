@@ -12,6 +12,7 @@ import Paper from "@mui/material/Paper";
 import LeaveForm from "./LeaveForm";
 import { useNavigate } from "react-router-dom";
 import backendInstance from "../Axios/axios";
+import SnackBarComp from "../Components/SnackBarComp";
 
 const LeaveApp = () => {
   const [open, setOpen] = React.useState(false);
@@ -28,10 +29,6 @@ const LeaveApp = () => {
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const [leave, setLeave] = useState([]);
@@ -61,8 +58,25 @@ const LeaveApp = () => {
     }
   }, [User, navigate, leaveData, getAdminData]);
 
+  const handleClose = useCallback(() => {
+    setOpen(false);
+    leaveData();
+  }, [setOpen, leaveData]);
+
+  const [openSnack, setOpenSnack] = React.useState(false);
+
+  const [dataMsg, setDataMsg] = React.useState("");
+
+  const handleClick = (msg) => {
+    console.log("opened");
+    setDataMsg(msg);
+    setOpenSnack(true);
+    getAdminData();
+  };
+
   const handleApprove = (e, ldata, request) => {
-    // document.getElementById("approvebutt").disabled = true;
+    document.getElementById("approvebutt").disabled = true;
+
     e.preventDefault();
 
     const dataObj = {
@@ -75,6 +89,12 @@ const LeaveApp = () => {
 
     console.log(dataObj);
     const res = backendInstance.put("/leave", dataObj);
+    if (res) {
+      handleClick(request);
+    } else {
+      document.getElementById("approvebutt").disabled = false;
+    }
+    document.getElementById("approvebutt").disabled = false;
   };
 
   return (
@@ -90,12 +110,12 @@ const LeaveApp = () => {
           <div>
             {" "}
             <Button
-              sx={{ backgroundColor: "buttcolor.main" }}
+              sx={{ backgroundColor: "buttcolor.main", marginBottom: "15px" }}
               variant="contained"
               startIcon={<AddCircleOutlineIcon />}
               onClick={handleClickOpen}
             >
-              Create Query
+              apply leave
             </Button>
           </div>
           <div style={{ height: 400, width: "100%" }}>
@@ -109,20 +129,48 @@ const LeaveApp = () => {
                     <TableCell align="right">Reason</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody sx={{}}>
                   {leave.map((lev) => (
                     <TableRow
                       key={lev.date}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
                     >
-                      <TableCell component="th" scope="row">
+                      <TableCell
+                        sx={{ color: "mild.main" }}
+                        component="th"
+                        scope="row"
+                      >
                         {lev.date}
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell sx={{ color: "mild.main" }} align="right">
                         {lev?.to?.slice(0, 10)}
                       </TableCell>
-                      <TableCell align="right">{lev.approval || "-"}</TableCell>
-                      <TableCell align="right">{lev.reason}</TableCell>
+                      <TableCell
+                        sx={{
+                          color: "white",
+                        }}
+                        align="right"
+                      >
+                        <span style={{ backgroundColor: "#FF9A28" }}>
+                          {lev.approval || "Pending"}
+                        </span>
+                      </TableCell>
+                      <TableCell
+                        sx={{ color: "mild.main" }}
+                        width={100}
+                        align="center"
+                      >
+                        <p
+                          style={{
+                            overflowWrap: "break-word",
+                            width: "100px",
+                          }}
+                        >
+                          {lev.reason}
+                        </p>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -132,39 +180,57 @@ const LeaveApp = () => {
         </>
       ) : (
         <div>
-          <div>
+          <div style={{}}>
             {adLeave
               .filter((leav) => leav.approval === "")
               .map((ldata) => (
-                <div>
-                  <p>
-                    <span>Name :</span> {ldata.name}
-                    &nbsp;&nbsp;
-                    <span>Email :</span> {ldata.email}
+                <div
+                  style={{
+                    border: "1px solid grey",
+                    borderRadius: "8px",
+                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                    margin: "10px",
+                  }}
+                >
+                  <p style={{ color: "#7E8E9F" }}>
+                    <span style={{ color: "#555A8F" }}>Name :</span>{" "}
+                    {ldata.name}
+                    &nbsp;&nbsp;&nbsp;
+                    <span style={{ color: "#555A8F" }}>Email :</span>{" "}
+                    {ldata.email}
                   </p>
-                  <p>
-                    <span>From :</span> {ldata.date}
-                    &nbsp;&nbsp;
-                    <span>No of Days :</span> {ldata.days}
+                  <p style={{ color: "#7E8E9F" }}>
+                    <span style={{ color: "#555A8F" }}>From :</span>{" "}
+                    {ldata.date}
+                    &nbsp;&nbsp;&nbsp;
+                    <span style={{ color: "#555A8F" }}>No of Days :</span>{" "}
+                    {ldata.days}
                   </p>
                   <div>
                     {" "}
-                    <p>
-                      <span>Reason :</span> {ldata.reason}
+                    <p
+                      style={{
+                        width: "350px",
+                        overflowWrap: "break-word",
+                        color: "#7E8E9F",
+                      }}
+                    >
+                      <span style={{ color: "#555A8F" }}>Reason :</span>{" "}
+                      {ldata.reason}
                     </p>
                     <Button
                       variant="contained"
-                      sx={{ backgroundColor: "buttcolor.main" }}
+                      sx={{ backgroundColor: "buttcolor.main", margin: "5px" }}
                       type="submit"
                       onClick={(e) => handleApprove(e, ldata, "Approved")}
                       id="approvebutt"
                     >
                       Approve
                     </Button>
-                    &nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;
                     <Button
                       variant="contained"
-                      sx={{ backgroundColor: "buttcolor.main" }}
+                      sx={{ backgroundColor: "buttcolor.main", margin: "5px" }}
                       type="submit"
                       onClick={(e) => handleApprove(e, ldata, "Denied")}
                       id="approvebutt"
@@ -177,6 +243,11 @@ const LeaveApp = () => {
           </div>
         </div>
       )}
+      <SnackBarComp
+        openSnack={openSnack}
+        setOpenSnack={setOpenSnack}
+        dataMsg={dataMsg}
+      />
     </div>
   );
 };

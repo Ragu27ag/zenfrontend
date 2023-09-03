@@ -1,0 +1,44 @@
+.main-div{
+    border: 2px solid black;
+   display: grid;
+   justify-content: center;
+   align-items: center;
+    
+
+}
+
+.tasks-div{
+    border: 1px solid black;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow:  rgba(0, 0, 0, 0.1) 0px 4px 12px;;
+}
+
+
+.tasks-div span{
+    color: #7E8E9F;
+   
+}
+
+.tasks-div p{
+    color: #161718;
+    font-size: 15px;
+    padding: 5px;
+    overflow-wrap: break-word;
+
+}
+
+.tasks-div1{
+    width: 250px;
+
+}
+
+.tasks-div2{
+
+    width: 250px;
+
+    
+}

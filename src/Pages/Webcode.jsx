@@ -45,8 +45,18 @@ const Webcode = () => {
       }
     }
   }, [User, navigate, getData, getAdminData]);
+
+  const handleClose = () => {
+    getData();
+    getAdminData();
+  };
   return (
-    <WebcodeCapstone data={data || []} User={User} result={result || []} />
+    <WebcodeCapstone
+      data={data || []}
+      User={User}
+      result={result || []}
+      handleClose={handleClose}
+    />
   );
 };
 

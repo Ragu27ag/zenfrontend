@@ -3,10 +3,11 @@ import { useFormik } from "formik";
 import React from "react";
 import * as yup from "yup";
 import ErrorIcon from "@mui/icons-material/Error";
-import { Link } from "react-router-dom";
 import backendInstance from "../Axios/axios";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
   const validation = yup.object().shape({
     name: yup.string().required("Enter the username"),
     email: yup.string().email().required("Enter email"),
@@ -22,7 +23,6 @@ const Register = () => {
     },
     onSubmit: async (data) => {
       console.log(data);
-
       if (data.confirmpassword !== data.password) {
         alert("Password doesnt match");
       } else {
@@ -32,6 +32,13 @@ const Register = () => {
           role: "student",
         };
         const res = await backendInstance.post("/users/register", obj);
+        if (res.data.msg === "Email already exists") {
+          alert("Email already exists");
+          document.getElementById("registerform").reset();
+        } else if (res.data.msg === "Inserted Successfully") {
+          document.getElementById("registerform").reset();
+          navigate("/login");
+        }
         console.log(res);
       }
     },
@@ -50,7 +57,7 @@ const Register = () => {
           marginTop: "150px",
         }}
       >
-        <form onSubmit={formData.handleSubmit}>
+        <form id="registerform" onSubmit={formData.handleSubmit}>
           <label htmlFor="name">User Name</label>
           <br />
           <input

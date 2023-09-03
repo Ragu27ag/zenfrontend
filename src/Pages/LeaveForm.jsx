@@ -8,8 +8,20 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import ErrorIcon from "@mui/icons-material/Error";
 import backendInstance from "../Axios/axios";
+import SnackBarComp from "../Components/SnackBarComp";
 
 const LeaveForm = ({ open, handleClose, userMail, userName }) => {
+  const [openSnack, setOpenSnack] = React.useState(false);
+
+  const [dataMsg, setDataMsg] = React.useState("");
+
+  const handleClick = () => {
+    console.log("opened");
+    setDataMsg("Applied Successfully");
+    setOpenSnack(true);
+    handleClose();
+  };
+
   const validation = yup.object().shape({
     days: yup
       .number()
@@ -40,10 +52,16 @@ const LeaveForm = ({ open, handleClose, userMail, userName }) => {
       };
       console.log(obj);
       const res = await backendInstance.post("/leave", obj);
+
       if (res.data.msg === "Inserted Successfully") {
-        formData.resetForm();
-        handleClose();
+        document.getElementById("days").value = "";
+        document.getElementById("date").value = "";
+        document.getElementById("reason").value = "";
+        handleClick();
+      } else {
+        document.getElementById.disabled = false;
       }
+      document.getElementById.disabled = false;
     },
 
     validationSchema: validation,
@@ -61,7 +79,7 @@ const LeaveForm = ({ open, handleClose, userMail, userName }) => {
           <DialogTitle id="alert-dialog-title">{"Add Leave"}</DialogTitle>
           <DialogContent sx={{ width: "400px", textAlign: "center" }}>
             <DialogContentText id="alert-dialog-description">
-              <form onSubmit={formData.handleSubmit}>
+              <form id="leaveform" onSubmit={formData.handleSubmit}>
                 <label htmlFor="days">Days</label>
                 <br />
                 <input
@@ -171,6 +189,11 @@ const LeaveForm = ({ open, handleClose, userMail, userName }) => {
           </DialogContent>
         </Dialog>
       </div>
+      <SnackBarComp
+        openSnack={openSnack}
+        setOpenSnack={setOpenSnack}
+        dataMsg={dataMsg}
+      />
     </div>
   );
 };

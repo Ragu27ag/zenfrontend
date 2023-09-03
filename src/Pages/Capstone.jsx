@@ -36,8 +36,17 @@ const Capstone = () => {
       getData();
     }
   }, [User, navigate, getData]);
+
+  const handleClose = () => {
+    getData();
+  };
   return (
-    <WebcodeCapstone data={data || []} User={User} result={result || []} />
+    <WebcodeCapstone
+      data={data || []}
+      User={User}
+      result={result || []}
+      handleClose={handleClose}
+    />
   );
 };
 export default Capstone;
