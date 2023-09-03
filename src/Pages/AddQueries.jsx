@@ -55,8 +55,8 @@ const AddQueries = () => {
         ...data,
         email: User.email,
         quesId: id,
-        chats: [],
-        replies: [],
+        assignedTo: "",
+        name: User.name,
       };
       console.log(obj);
       const res = await backendInstance.post("/queries", obj);
@@ -64,7 +64,7 @@ const AddQueries = () => {
       if (res.data.msg === "Inserted Successfully") {
         document.getElementById("submitbutt").disabled = true;
         handleClick();
-        setTimeout(() => navigate("/queries"), 4000);
+        setTimeout(() => navigate("/queries"), 2000);
       } else {
         document.getElementById("submitbutt").disabled = false;
       }

@@ -9,7 +9,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
@@ -30,6 +29,8 @@ import InterpreterModeIcon from "@mui/icons-material/InterpreterMode";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
+
+import logo from "./zenimage-PhotoRoom.png-PhotoRoom.png";
 
 const drawerWidth = 240;
 
@@ -126,7 +127,7 @@ const Main = () => {
     "PortFolio-submission",
     "Leave-applications",
     "Mock-interview",
-    "Leaderboard",
+
     "Syllabus",
   ];
   const admArr = [
@@ -138,7 +139,7 @@ const Main = () => {
     "PortFolio-submission",
     "Leave-applications",
     "Mock-interview",
-    "Leaderboard",
+
     "Syllabus",
   ];
 
@@ -202,20 +203,10 @@ const Main = () => {
               flexWrap: "wrap",
             }}
           >
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              sx={{
-                marginRight: 5,
-                ...(open && { display: "none" }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
+            <img src={logo} alt="imagess" height={50} width={50} />
 
             <Typography variant="h6" noWrap component="div">
-              Mini variant drawer
+              Zenclass
             </Typography>
             <div style={{ position: "relative" }}>
               <span>
@@ -255,7 +246,7 @@ const Main = () => {
                       textAlign: "center",
                     }}
                   >
-                    <button
+                    {/* <button
                       style={{
                         width: "inherit",
                         background: "none",
@@ -264,8 +255,8 @@ const Main = () => {
                       }}
                     >
                       profile
-                    </button>
-                    <br />
+                    </button> */}
+                    {/* <br /> */}
                     <button
                       style={{
                         width: "inherit",
