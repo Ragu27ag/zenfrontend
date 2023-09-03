@@ -69,7 +69,7 @@ const EditForm = ({ arr, open, handleClose, getClass, getAdditionalClass }) => {
         }
       });
 
-      if (Number(data.day) > arr.length) {
+      if (Number(data.day) > 40) {
         alert(
           "Roadmap sessions are full try adding this as additional session"
         );
