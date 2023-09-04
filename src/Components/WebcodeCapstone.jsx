@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Divider, Typography } from "@mui/material";
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
@@ -352,12 +352,23 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
                           .filter((resval) => descObj.title === resval.title)
                           .map((res) => (
                             <>
+                              <Divider
+                                variant="middle"
+                                sx={{ backgroundColor: "head.main" }}
+                              />
                               <p>
                                 Marks : <span>{res.marks}</span>
                               </p>
                               <p>
                                 Comments : <span>{res.comments}</span>
                               </p>
+                              <Divider
+                                variant="middle"
+                                sx={{
+                                  backgroundColor: "head.main",
+                                  marginBottom: "5px",
+                                }}
+                              />
                               <div>
                                 <label htmlFor="fesourcecode">
                                   Front-end Source code :
