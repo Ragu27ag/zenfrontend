@@ -152,7 +152,7 @@ const ZClasses = () => {
     let task = arr.filter((cla) => cla.day === classes);
     let submitted = new Date();
     let taskDate = submitted.getDate();
-    let taskMonth = submitted.getMonth();
+    let taskMonth = submitted.getMonth() + 1;
     let taskYear = submitted.getFullYear();
     console.log(task);
     const obj = {
