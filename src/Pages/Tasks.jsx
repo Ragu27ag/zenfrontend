@@ -44,6 +44,7 @@ const Tasks = () => {
     console.log("opened");
     setDataMsg("Submitted Successfully");
     setOpenSnack(true);
+    tasksData();
     adminData();
   };
 
@@ -71,13 +72,14 @@ const Tasks = () => {
       const res = backendInstance.put("/tasks", dataObj);
       if (res) {
         handleClick();
-        document.getElementById("submitbutt").disabled = false;
         document.getElementById("marks").value = "";
         document.getElementById("comments").value = "";
       }
       document.getElementById("submitbutt").disabled = false;
     }
   };
+
+  console.log(allTasks.length);
 
   return (
     <div
@@ -91,150 +93,171 @@ const Tasks = () => {
       {" "}
       {User.role === "student" ? (
         <div className="query-main">
-          {tasks.map((query) => (
-            <div
-              className="tasks-div"
-              style={{
-                border: "1px solid  grey",
-                display: "flex",
-                justifyContent: "space-around",
-                flexWrap: "wrap",
-                marginTop: "10px",
-                borderRadius: "8px",
-                boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-              }}
-            >
-              <div className="tasks-div1" style={{ width: "250px" }}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ color: "#555A8f", padding: "5px" }}
-                >
-                  {User.name}
-                </Typography>
-                <p
-                  style={{
-                    color: "#161718",
-                    fontSize: "15px",
-                    padding: "5px",
-                    overflowWrap: "break-word",
-                  }}
-                >
-                  Day {query.day} - {query.dayTask}
-                </p>
-                <p
-                  style={{
-                    color: "#161718",
-                    fontSize: "15px",
-                    padding: "5px",
-                    overflowWrap: "break-word",
-                  }}
-                >
-                  {" "}
-                  <span style={{ color: "#7E8E9F" }}>URL : </span>
-                  {query.url}
-                </p>
-              </div>
-              <div className="tasks-div1" style={{ width: "250px" }}>
-                {" "}
-                <p
-                  style={{
-                    color: "#161718",
-                    fontSize: "15px",
-                    padding: "5px",
-                    overflowWrap: "break-word",
-                  }}
-                >
-                  <span style={{ color: "#7E8E9F" }}>Submitted on : </span>
-                  {query.submitted}
-                </p>
-                <p
-                  style={{
-                    color: "#161718",
-                    fontSize: "15px",
-                    padding: "5px",
-                    overflowWrap: "break-word",
-                  }}
-                >
-                  <span style={{ color: "#7E8E9F" }}>Marks : </span>
-                  <span
+          {tasks.length === 0 ? (
+            <p style={{ margin: "5px", color: "#555A8F" }}>
+              No tasks submitted
+            </p>
+          ) : (
+            tasks.map((query) => (
+              <div
+                className="tasks-div"
+                style={{
+                  border: "1px solid  grey",
+                  display: "flex",
+                  justifyContent: "space-around",
+                  flexWrap: "wrap",
+                  marginTop: "10px",
+                  borderRadius: "8px",
+                  boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                }}
+              >
+                <div className="tasks-div1" style={{ width: "250px" }}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ color: "#555A8f", padding: "5px" }}
+                  >
+                    {User.name}
+                  </Typography>
+                  <p
                     style={{
-                      border: "1px solid #FF9828",
+                      color: "#161718",
+                      fontSize: "15px",
+                      padding: "5px",
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    Day {query.day} - {query.dayTask}
+                  </p>
+                  <p
+                    style={{
+                      color: "#161718",
+                      fontSize: "15px",
+                      padding: "5px",
+                      overflowWrap: "break-word",
                     }}
                   >
                     {" "}
-                    {query.marks}
-                  </span>
-                </p>
-                <p style={{ overflowWrap: "break-word" }}>
-                  <span style={{ color: "#7E8E9F" }}>Comments : </span>
-                  {query.comments}
-                </p>
+                    <span style={{ color: "#7E8E9F" }}>URL : </span>
+                    {query.url}
+                  </p>
+                </div>
+                <div className="tasks-div1" style={{ width: "250px" }}>
+                  {" "}
+                  <p
+                    style={{
+                      color: "#161718",
+                      fontSize: "15px",
+                      padding: "5px",
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    <span style={{ color: "#7E8E9F" }}>Submitted on : </span>
+                    {query.submitted}
+                  </p>
+                  <p
+                    style={{
+                      color: "#161718",
+                      fontSize: "15px",
+                      padding: "5px",
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    <span style={{ color: "#7E8E9F" }}>Marks : </span>
+                    <span
+                      style={{
+                        border: "1px solid #FF9828",
+                      }}
+                    >
+                      {" "}
+                      {query.marks}
+                    </span>
+                  </p>
+                  <p style={{ overflowWrap: "break-word" }}>
+                    <span style={{ color: "#7E8E9F" }}>Comments : </span>
+                    {query.comments}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       ) : (
         <div style={{}}>
-          {allTasks
-            .filter((tas) => tas.evaluated === false)
-            .map((query) => (
-              <div
-                style={{
-                  margin: "5px",
-                  border: "2px solid",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent: "space-around",
-                }}
-              >
-                <div>
-                  <Typography variant="h5">
-                    Day {query.day} - {query.dayTask}
-                  </Typography>
-                  <p>
-                    {" "}
-                    <span>URL : </span>
-                    {query.url}
-                  </p>
-                  <p>
-                    <span>Submitted on : </span>
-                    {query.submitted}
-                  </p>
-                  <p>
-                    <span>Submitted by : </span>
-                    {query.email}
-                  </p>
+          {allTasks.filter((tas) => tas.evaluated === false).length === 0 ? (
+            <p>No Tasks submitted </p>
+          ) : (
+            allTasks
+              .filter((tas) => tas.evaluated === false)
+              .map((query) => (
+                <div
+                  style={{
+                    margin: "5px",
+
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "space-around",
+                    borderRadius: "8px",
+                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                    width: "400px",
+                    border: "1px solid  grey",
+                  }}
+                >
+                  <div>
+                    <Typography sx={{ color: "head.main" }} variant="h5">
+                      Day {query.day} - {query.dayTask}
+                    </Typography>
+                    <p style={{ overflowWrap: "break-word", color: "#555A8F" }}>
+                      {" "}
+                      <span style={{ color: "#7E8E9F" }}>URL : </span>
+                      {query.url}
+                    </p>
+                    <p style={{ overflowWrap: "break-word", color: "#555A8F" }}>
+                      <span style={{ color: "#7E8E9F" }}>Submitted on : </span>
+                      {query.submitted}
+                    </p>
+                    <p style={{ overflowWrap: "break-word", color: "#555A8F" }}>
+                      <span style={{ color: "#7E8E9F" }}>Submitted by : </span>
+                      {query.email}
+                    </p>
+                  </div>
+                  <div>
+                    <form onSubmit={(e) => handleMarks(e, query)}>
+                      <label style={{ color: "#7E8E9F" }} htmlFor="marks">
+                        Marks
+                      </label>
+                      <br />
+                      <input type="text" name="marks" id="marks" required />
+                      <br />
+                      <label style={{ color: "#7E8E9F" }} htmlFor="comments">
+                        Comments
+                      </label>
+                      <br />
+                      <textarea
+                        name="comments"
+                        id="comments"
+                        rows={10}
+                        cols={20}
+                        required
+                      ></textarea>
+                      <br />
+                      <br />
+                      <Button
+                        sx={{
+                          backgroundColor: "buttcolor.main",
+                          margin: "5px",
+                        }}
+                        variant="contained"
+                        type="submit"
+                        id="submitbutt"
+                      >
+                        submit
+                      </Button>
+                    </form>
+                  </div>
                 </div>
-                <div>
-                  <form onSubmit={(e) => handleMarks(e, query)}>
-                    <label htmlFor="marks">Marks</label>
-                    <br />
-                    <input type="text" name="marks" id="marks" required />
-                    <br />
-                    <label htmlFor="comments">Comments</label>
-                    <br />
-                    <textarea
-                      name="comments"
-                      id="comments"
-                      rows={10}
-                      cols={20}
-                      required
-                    ></textarea>
-                    <br />
-                    <br />
-                    <Button
-                      sx={{ backgroundColor: "buttcolor.main" }}
-                      variant="contained"
-                      type="submit"
-                      id="submitbutt"
-                    >
-                      submit
-                    </Button>
-                  </form>
-                </div>
-              </div>
-            ))}
+              ))
+          )}
         </div>
       )}
       <SnackBarComp

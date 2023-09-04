@@ -22,6 +22,7 @@ const Login = () => {
       const res = await backendInstance.post("/users/login", data);
       console.log(res.data);
       sessionStorage.setItem("user", JSON.stringify(res.data));
+      console.log(res);
       if (res.data.msg === "Invalid Credentials") {
         alert("Invalid Credentials");
       } else if (res.data.msg === "User doesnt exist") {
@@ -44,10 +45,16 @@ const Login = () => {
       <div
         style={{
           marginTop: "150px",
+          border: "1px solid grey",
+          borderRadius: "8px",
+          boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+          width: "350px",
         }}
       >
         <form onSubmit={formData.handleSubmit}>
-          <label htmlFor="email">Email</label>
+          <label style={{ margin: "5px", color: "#555A8F" }} htmlFor="email">
+            Email
+          </label>
           <br />
           <input
             type="email"
@@ -56,6 +63,7 @@ const Login = () => {
             onChange={formData.handleChange}
             onBlur={formData.handleBlur}
             value={formData.email}
+            style={{ margin: "5px" }}
           />
           {formData.touched.email && formData.errors.email && (
             <div
@@ -73,7 +81,9 @@ const Login = () => {
             </div>
           )}
           <br />
-          <label htmlFor="password">Password</label>
+          <label style={{ margin: "5px", color: "#555A8F" }} htmlFor="password">
+            Password
+          </label>
           <br />
           <input
             type="password"
@@ -82,6 +92,7 @@ const Login = () => {
             onChange={formData.handleChange}
             onBlur={formData.handleBlur}
             value={formData.password}
+            style={{ margin: "5px" }}
           />
           {formData.touched.password && formData.errors.password && (
             <div
@@ -100,7 +111,15 @@ const Login = () => {
           )}
           <br />
           <br />
-          <Button variant="contained" type="submit">
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              margin: "5px",
+              backgroundColor: "secondary.main",
+              color: "white",
+            }}
+          >
             Log IN{" "}
           </Button>
           &nbsp;&nbsp;&nbsp;

@@ -181,65 +181,79 @@ const LeaveApp = () => {
       ) : (
         <div>
           <div style={{}}>
-            {adLeave
-              .filter((leav) => leav.approval === "")
-              .map((ldata) => (
-                <div
-                  style={{
-                    border: "1px solid grey",
-                    borderRadius: "8px",
-                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-                    margin: "10px",
-                  }}
-                >
-                  <p style={{ color: "#7E8E9F" }}>
-                    <span style={{ color: "#555A8F" }}>Name :</span>{" "}
-                    {ldata.name}
-                    &nbsp;&nbsp;&nbsp;
-                    <span style={{ color: "#555A8F" }}>Email :</span>{" "}
-                    {ldata.email}
-                  </p>
-                  <p style={{ color: "#7E8E9F" }}>
-                    <span style={{ color: "#555A8F" }}>From :</span>{" "}
-                    {ldata.date}
-                    &nbsp;&nbsp;&nbsp;
-                    <span style={{ color: "#555A8F" }}>No of Days :</span>{" "}
-                    {ldata.days}
-                  </p>
-                  <div>
-                    {" "}
-                    <p
-                      style={{
-                        width: "350px",
-                        overflowWrap: "break-word",
-                        color: "#7E8E9F",
-                      }}
-                    >
-                      <span style={{ color: "#555A8F" }}>Reason :</span>{" "}
-                      {ldata.reason}
+            {adLeave.filter((leav) => leav.approval === "").length === 0 ? (
+              <p style={{ margin: "5px", color: "#555A8F" }}>
+                No leave applications
+              </p>
+            ) : (
+              adLeave
+                .filter((leav) => leav.approval === "")
+                .map((ldata) => (
+                  <div
+                    style={{
+                      border: "1px solid grey",
+                      borderRadius: "8px",
+                      boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                      margin: "10px",
+                    }}
+                  >
+                    <p style={{ color: "#7E8E9F" }}>
+                      <span style={{ color: "#555A8F" }}>Name :</span>{" "}
+                      {ldata.name}
+                      &nbsp;&nbsp;&nbsp;
+                      <span style={{ color: "#555A8F" }}>Email :</span>{" "}
+                      {ldata.email}
                     </p>
-                    <Button
-                      variant="contained"
-                      sx={{ backgroundColor: "buttcolor.main", margin: "5px" }}
-                      type="submit"
-                      onClick={(e) => handleApprove(e, ldata, "Approved")}
-                      id="approvebutt"
-                    >
-                      Approve
-                    </Button>
-                    &nbsp;&nbsp;&nbsp;
-                    <Button
-                      variant="contained"
-                      sx={{ backgroundColor: "buttcolor.main", margin: "5px" }}
-                      type="submit"
-                      onClick={(e) => handleApprove(e, ldata, "Denied")}
-                      id="approvebutt"
-                    >
-                      Deny
-                    </Button>
+                    <p style={{ color: "#7E8E9F" }}>
+                      <span style={{ color: "#555A8F" }}>From :</span>{" "}
+                      {ldata.date}
+                      &nbsp;&nbsp;&nbsp;
+                      <span style={{ color: "#555A8F" }}>
+                        No of Days :
+                      </span>{" "}
+                      {ldata.days}
+                    </p>
+                    <div>
+                      {" "}
+                      <p
+                        style={{
+                          width: "350px",
+                          overflowWrap: "break-word",
+                          color: "#7E8E9F",
+                        }}
+                      >
+                        <span style={{ color: "#555A8F" }}>Reason :</span>{" "}
+                        {ldata.reason}
+                      </p>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "buttcolor.main",
+                          margin: "5px",
+                        }}
+                        type="submit"
+                        onClick={(e) => handleApprove(e, ldata, "Approved")}
+                        id="approvebutt"
+                      >
+                        Approve
+                      </Button>
+                      &nbsp;&nbsp;&nbsp;
+                      <Button
+                        variant="contained"
+                        sx={{
+                          backgroundColor: "buttcolor.main",
+                          margin: "5px",
+                        }}
+                        type="submit"
+                        onClick={(e) => handleApprove(e, ldata, "Denied")}
+                        id="approvebutt"
+                      >
+                        Deny
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+            )}
           </div>
         </div>
       )}

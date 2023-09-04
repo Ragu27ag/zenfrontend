@@ -2,7 +2,7 @@ import axios from "axios";
 
 const backendInstance = axios.create({
   baseURL: process.env.REACT_APP_URL,
-  timeout: 5000,
+  timeout: 300000,
 });
 
 backendInstance.interceptors.request.use(
@@ -16,9 +16,12 @@ backendInstance.interceptors.request.use(
         accesstoken: User.accesstoken,
       },
     };
+    console.log("req", req);
+    console.log("newObj", newObj);
     return newObj;
   },
   function (error) {
+    console.log("error", error);
     return Promise.reject.error;
   }
 );

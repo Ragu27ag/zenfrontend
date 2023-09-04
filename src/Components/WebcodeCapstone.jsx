@@ -116,8 +116,7 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
     const res = await backendInstance.post("/webcodecapstone", obj);
     if (res.data.msg === "Inserted Successfully") {
       handleClick();
-      let addform = document.getElementById("addform");
-      addform.reset();
+      document.getElementById("addform").reset();
     } else {
       document.getElementById("submitbutt").disabled = false;
     }
@@ -178,58 +177,64 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
       {User.role === "student" ? (
         <>
           <div style={{ marginTop: "50px" }}>
-            {data.map((val) => {
-              return (
-                <div
-                  onClick={() => handleOpen(val)}
-                  style={{
-                    border: "1px solid grey",
-                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-                    display: "flex",
-                    justifyContent: "space-around",
-                    width: "400px",
-                    marginTop: "10px",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <p>
-                    <Typography variant="h6" sx={{ color: "head.main" }}>
-                      {User.name}
-                    </Typography>
-                    <span style={{ fontSize: "12px", color: "#7E8E9F" }}>
-                      ({val.batch} - {val?.type?.toUpperCase()})
-                    </span>
-                    <br />
-                    <span style={{ fontSize: "12px", color: "#7E8E9F" }}>
-                      {val.title}
-                    </span>
-                  </p>
-
-                  <div>
-                    {result.map(
-                      (res) =>
-                        res.title === val.title && (
-                          <p>
-                            {" "}
-                            Marks :
-                            <span
-                              style={{
-                                border: "1px solid #FF9828",
-                              }}
-                            >
-                              {" "}
-                              {res.marks === "" ? "-" : res.marks}
-                            </span>
-                          </p>
-                        )
-                    )}
-                    <p style={{ backgroundColor: "#FF9828", color: "#555A8F" }}>
-                      {val.type}
+            {data.length === 0 ? (
+              <p style={{ margin: "5px", color: "#555A8F" }}>Not assigned</p>
+            ) : (
+              data.map((val) => {
+                return (
+                  <div
+                    onClick={() => handleOpen(val)}
+                    style={{
+                      border: "1px solid grey",
+                      boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                      display: "flex",
+                      justifyContent: "space-around",
+                      width: "400px",
+                      marginTop: "10px",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    <p>
+                      <Typography variant="h6" sx={{ color: "head.main" }}>
+                        {User.name}
+                      </Typography>
+                      <span style={{ fontSize: "12px", color: "#7E8E9F" }}>
+                        ({val.batch} - {val?.type?.toUpperCase()})
+                      </span>
+                      <br />
+                      <span style={{ fontSize: "12px", color: "#7E8E9F" }}>
+                        {val.title}
+                      </span>
                     </p>
+
+                    <div>
+                      {result.map(
+                        (res) =>
+                          res.title === val.title && (
+                            <p>
+                              {" "}
+                              Marks :
+                              <span
+                                style={{
+                                  border: "1px solid #FF9828",
+                                }}
+                              >
+                                {" "}
+                                {res.marks === "" ? "-" : res.marks}
+                              </span>
+                            </p>
+                          )
+                      )}
+                      <p
+                        style={{ backgroundColor: "#FF9828", color: "#555A8F" }}
+                      >
+                        {val.type}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
           <div style={{ maxWidth: "500px" }}>
             {" "}
@@ -404,91 +409,111 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
               alignItems: "center",
             }}
           >
-            {data
-              .filter((res) => res.evaluated === false)
-              .map((val) => {
-                return (
-                  <div
-                    style={{
-                      border: "1px solid grey",
-                      margin: "10px",
-                      boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <div style={{ margin: "5px" }}>
-                      <Typography sx={{ color: "head.main" }}>
-                        {val.name} - ({val.email})
-                      </Typography>
-                      <p>
-                        {val.batch} - {val.type}
-                      </p>
-                    </div>
-                    <div style={{ margin: "5px" }}>
-                      <p>{val.title}</p>
-                    </div>
-                    <div style={{ margin: "5px" }}>
-                      <p>
-                        <span style={{ color: "#7E8E9F" }}>
-                          Front end source code :{" "}
-                        </span>
-                        {val.fesourcecode}
-                      </p>
-                      <p>
-                        <span style={{ color: "#7E8E9F" }}>
-                          Back end source code :{" "}
-                        </span>
-                        {val.besourcecode}
-                      </p>
-                      <p>
-                        <span style={{ color: "#7E8E9F" }}>
-                          Front end deployed Url :{" "}
-                        </span>
-                        {val.fedeploy}
-                      </p>
-                      <p>
-                        <span style={{ color: "#7E8E9F" }}>
-                          Back end deployed Url :{" "}
-                        </span>
-                        {val.bedeploy}
-                      </p>
-                    </div>
-                    <div style={{ margin: "5px" }}>
-                      <form id="markform" onSubmit={(e) => handleMark(e, val)}>
-                        <label htmlFor="marks">Marks(for 10) : </label>
-                        <input id="marks" name="marks" />
-                        <br />
-                        <br />
-                        <label htmlFor="comments">Comments : </label>
-                        <br />
-                        <textarea
-                          rows={10}
-                          cols={30}
-                          id="comments"
-                          name="comments"
-                        ></textarea>
-                        <br />
-                        <br />
-                        <Button
-                          sx={{
-                            backgroundColor: "buttcolor.main",
-                            margin: "5px",
-                          }}
-                          type="submit"
-                          variant="contained"
-                          id="markbutton"
+            {data.filter((res) => res.evaluated === false).length === 0 ? (
+              <p style={{ margin: "5px", color: "#555A8F" }}>
+                No codes sumbitted
+              </p>
+            ) : (
+              data
+                .filter((res) => res.evaluated === false)
+                .map((val) => {
+                  return (
+                    <div
+                      style={{
+                        border: "1px solid grey",
+                        margin: "10px",
+                        boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <div style={{ margin: "5px" }}>
+                        <Typography sx={{ color: "head.main" }}>
+                          {val.name} - ({val.email})
+                        </Typography>
+                        <p>
+                          {val.batch} - {val.type}
+                        </p>
+                      </div>
+                      <div style={{ margin: "5px" }}>
+                        <p>{val.title}</p>
+                      </div>
+                      <div style={{ margin: "5px" }}>
+                        <p>
+                          <span style={{ color: "#7E8E9F" }}>
+                            Front end source code :{" "}
+                          </span>
+                          {val.fesourcecode}
+                        </p>
+                        <p>
+                          <span style={{ color: "#7E8E9F" }}>
+                            Back end source code :{" "}
+                          </span>
+                          {val.besourcecode}
+                        </p>
+                        <p>
+                          <span style={{ color: "#7E8E9F" }}>
+                            Front end deployed Url :{" "}
+                          </span>
+                          {val.fedeploy}
+                        </p>
+                        <p>
+                          <span style={{ color: "#7E8E9F" }}>
+                            Back end deployed Url :{" "}
+                          </span>
+                          {val.bedeploy}
+                        </p>
+                      </div>
+                      <div style={{ margin: "5px" }}>
+                        <form
+                          id="markform"
+                          onSubmit={(e) => handleMark(e, val)}
                         >
-                          Submit
-                        </Button>
-                      </form>
+                          <label htmlFor="marks">Marks(for 10) : </label>
+                          <input id="marks" name="marks" />
+                          <br />
+                          <br />
+                          <label htmlFor="comments">Comments : </label>
+                          <br />
+                          <textarea
+                            rows={10}
+                            cols={30}
+                            id="comments"
+                            name="comments"
+                          ></textarea>
+                          <br />
+                          <br />
+                          <Button
+                            sx={{
+                              backgroundColor: "buttcolor.main",
+                              margin: "5px",
+                            }}
+                            type="submit"
+                            variant="contained"
+                            id="markbutton"
+                          >
+                            Submit
+                          </Button>
+                        </form>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            <div style={{ marginTop: "20px", border: "2px solid" }}>
+                  );
+                })
+            )}
+            <div
+              style={{
+                marginTop: "20px",
+                border: "1px solid grey",
+                borderRadius: "8px",
+                boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+              }}
+            >
               {" "}
               {
-                <div style={{ margin: "20px" }} id="add" className="add">
+                <div
+                  style={{ margin: "20px", color: "#7E8E9F" }}
+                  id="add"
+                  className="add"
+                >
                   <div>
                     <Typography variant="h6">Add Projects</Typography>
                   </div>

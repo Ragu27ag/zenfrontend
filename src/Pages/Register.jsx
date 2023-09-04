@@ -55,10 +55,16 @@ const Register = () => {
       <div
         style={{
           marginTop: "150px",
+          border: "1px solid grey",
+          borderRadius: "8px",
+          boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+          width: "300px",
         }}
       >
         <form id="registerform" onSubmit={formData.handleSubmit}>
-          <label htmlFor="name">User Name</label>
+          <label style={{ margin: "5px", color: "#555A8F" }} htmlFor="name">
+            User Name
+          </label>
           <br />
           <input
             name="name"
@@ -66,6 +72,7 @@ const Register = () => {
             onChange={formData.handleChange}
             onBlur={formData.handleBlur}
             value={formData.email}
+            style={{ margin: "5px", color: "#555A8F" }}
           />
           {formData.touched.name && formData.errors.name && (
             <div
@@ -83,7 +90,9 @@ const Register = () => {
             </div>
           )}
           <br />
-          <label htmlFor="email">Email</label>
+          <label style={{ margin: "5px", color: "#555A8F" }} htmlFor="email">
+            Email
+          </label>
           <br />
           <input
             type="email"
@@ -92,6 +101,7 @@ const Register = () => {
             onChange={formData.handleChange}
             onBlur={formData.handleBlur}
             value={formData.email}
+            style={{ margin: "5px", color: "#555A8F" }}
           />
           {formData.touched.email && formData.errors.email && (
             <div
@@ -109,7 +119,9 @@ const Register = () => {
             </div>
           )}
           <br />
-          <label htmlFor="password">Password</label>
+          <label style={{ margin: "5px", color: "#555A8F" }} htmlFor="password">
+            Password
+          </label>
           <br />
           <input
             type="password"
@@ -118,6 +130,7 @@ const Register = () => {
             onChange={formData.handleChange}
             onBlur={formData.handleBlur}
             value={formData.password}
+            style={{ margin: "5px", color: "#555A8F" }}
           />
           {formData.touched.password && formData.errors.password && (
             <div
@@ -135,7 +148,12 @@ const Register = () => {
             </div>
           )}
           <br />
-          <label htmlFor="confirmpassword">Confirm Password</label>
+          <label
+            style={{ margin: "5px", color: "#555A8F" }}
+            htmlFor="confirmpassword"
+          >
+            Confirm Password
+          </label>
           <br />
           <input
             type="password"
@@ -144,6 +162,7 @@ const Register = () => {
             onChange={formData.handleChange}
             onBlur={formData.handleBlur}
             value={formData.confirmpassword}
+            style={{ margin: "5px", color: "#555A8F" }}
           />
           {formData.touched.confirmpassword &&
             formData.errors.confirmpassword && (
@@ -163,7 +182,15 @@ const Register = () => {
             )}
           <br />
           <br />
-          <Button variant="contained" type="submit">
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              margin: "5px",
+              backgroundColor: "secondary.main",
+              color: "white",
+            }}
+          >
             Log IN{" "}
           </Button>
           &nbsp;&nbsp;&nbsp;

@@ -236,61 +236,77 @@ const Portfolio = () => {
           </>
         ) : (
           <div>
-            {result
-              .filter((res) => res.evaluated === false)
-              .map((val) => {
-                return (
-                  <div style={{ margin: "15px" }}>
-                    <div>
-                      <Typography variant="h5" sx={{ color: "head.main" }}>
-                        {val.name} - ({val.email})
-                      </Typography>
-                      <p>{val.batch}</p>
-                    </div>
-                    <div>
-                      <p style={{ color: "#555A8F" }}>
-                        <span style={{ color: "#7E8E9F" }}>Github URL : </span>
-                        {val.github}
-                      </p>
-                      <p style={{ color: "#555A8F" }}>
-                        <span style={{ color: "#7E8E9F" }}>Portfolio : </span>
-                        {val.port}
-                      </p>
-                      <p style={{ color: "#555A8F" }}>
-                        <span style={{ color: "#7E8E9F" }}>Resume URL : </span>
-                        {val.resume}
-                      </p>
-                    </div>
-                    <div>
-                      <form id="markform" onSubmit={(e) => handleMark(e, val)}>
-                        <label style={{ color: "#7E8E9F" }} htmlFor="comments">
-                          Comments :{" "}
-                        </label>
-                        <br />
-                        <textarea
-                          rows={10}
-                          cols={30}
-                          id="comments"
-                          name="comments"
-                        ></textarea>
-                        <br />
-                        <br />
-                        <Button
-                          sx={{
-                            backgroundColor: "buttcolor.main",
-                            marginBottom: "15px",
-                          }}
-                          type="submit"
-                          variant="contained"
-                          id="markbutt"
+            {result.filter((res) => res.evaluated === false).length === 0 ? (
+              <p style={{ margin: "5px", color: "#555A8F" }}>
+                No portfolio submietted for review
+              </p>
+            ) : (
+              result
+                .filter((res) => res.evaluated === false)
+                .map((val) => {
+                  return (
+                    <div style={{ margin: "15px" }}>
+                      <div>
+                        <Typography variant="h5" sx={{ color: "head.main" }}>
+                          {val.name} - ({val.email})
+                        </Typography>
+                        <p>{val.batch}</p>
+                      </div>
+                      <div>
+                        <p style={{ color: "#555A8F" }}>
+                          <span style={{ color: "#7E8E9F" }}>
+                            Github URL :{" "}
+                          </span>
+                          {val.github}
+                        </p>
+                        <p style={{ color: "#555A8F" }}>
+                          <span style={{ color: "#7E8E9F" }}>Portfolio : </span>
+                          {val.port}
+                        </p>
+                        <p style={{ color: "#555A8F" }}>
+                          <span style={{ color: "#7E8E9F" }}>
+                            Resume URL :{" "}
+                          </span>
+                          {val.resume}
+                        </p>
+                      </div>
+                      <div>
+                        <form
+                          id="markform"
+                          onSubmit={(e) => handleMark(e, val)}
                         >
-                          Submit
-                        </Button>
-                      </form>
+                          <label
+                            style={{ color: "#7E8E9F" }}
+                            htmlFor="comments"
+                          >
+                            Comments :{" "}
+                          </label>
+                          <br />
+                          <textarea
+                            rows={10}
+                            cols={30}
+                            id="comments"
+                            name="comments"
+                          ></textarea>
+                          <br />
+                          <br />
+                          <Button
+                            sx={{
+                              backgroundColor: "buttcolor.main",
+                              marginBottom: "15px",
+                            }}
+                            type="submit"
+                            variant="contained"
+                            id="markbutt"
+                          >
+                            Submit
+                          </Button>
+                        </form>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+            )}
           </div>
         )}
         <SnackBarComp

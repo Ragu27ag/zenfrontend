@@ -167,11 +167,12 @@ const ZClasses = () => {
     console.log(obj);
     const res = await backendInstance.post("/task", obj);
     if (res.data.msg === "Inserted Successfully") {
-      document.getElementById("submitbutt").disabled = false;
       handleClick("Submitted Successfully ");
+      document.getElementById("submitform").reset();
     } else {
       document.getElementById("submitbutt").disabled = false;
     }
+    document.getElementById("submitbutt").disabled = false;
   };
 
   const handleAdditional = (data) => {
@@ -186,7 +187,6 @@ const ZClasses = () => {
     const res = await backendInstance.post("/deleteClass", data);
     if (res.data.msg === "Deleted Successfully") {
       handleClick("Deleted Succesfully");
-      document.getElementById("deletebutt").disabled = false;
     }
     document.getElementById("deletebutt").disabled = false;
   };
@@ -202,17 +202,15 @@ const ZClasses = () => {
   //   handleClickOpen();
   // };
 
-  const handleClick = useCallback(
-    (msg) => {
-      console.log("opened");
-      setDataMsg(msg);
-      getClass();
-      getAddtionalClass();
-      tasksData();
-      setOpenSnack(true);
-    },
-    [getClass, getAddtionalClass, tasksData]
-  );
+  const handleClick = (msg) => {
+    console.log("opened");
+    setDataMsg(msg);
+    setCurrTask(document.getElementById("task").value);
+    getClass();
+    getAddtionalClass();
+    tasksData();
+    setOpenSnack(true);
+  };
 
   return (
     <div
@@ -271,7 +269,12 @@ const ZClasses = () => {
             boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
           }}
         >
-          {!addOpen &&
+          {!addOpen && arr.filter((val) => val.day === classes).length === 0 ? (
+            <p style={{ margin: "5px", color: "#555A8F" }}>
+              Classes not yet assigned
+            </p>
+          ) : (
+            !addOpen &&
             arr
               .filter((val) => val.day === classes)
               .map((data) =>
@@ -324,7 +327,7 @@ const ZClasses = () => {
                               <p style={{ color: "#7E8E9F" }}>
                                 {data.activities}
                               </p>
-                              <form onSubmit={handleSubmit}>
+                              <form id="submitform" onSubmit={handleSubmit}>
                                 <input
                                   name="task"
                                   id="task"
@@ -399,8 +402,15 @@ const ZClasses = () => {
                     )}
                   </div>
                 )
-              )}
+              )
+          )}
           {addOpen &&
+          addArr.filter((add) => add.title === currAdd).length === 0 ? (
+            <p style={{ margin: "5px", color: "#555A8F" }}>
+              Classes not yet assigned
+            </p>
+          ) : (
+            addOpen &&
             addArr
               .filter((add) => add.title === currAdd)
               .map((data) => (
@@ -441,7 +451,8 @@ const ZClasses = () => {
                     </>
                   )}
                 </div>
-              ))}
+              ))
+          )}
         </Box>
         <Box
           sx={{

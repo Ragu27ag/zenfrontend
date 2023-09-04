@@ -286,6 +286,7 @@ const Main = () => {
         onMouseOut={handleDrawerClose}
       >
         <DrawerHeader>
+          <p style={{ color: "#555A8F" }}>{User?.role?.toUpperCase()}</p>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
               <ChevronRightIcon />

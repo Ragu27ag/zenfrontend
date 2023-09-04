@@ -93,237 +93,211 @@ const QueriesPage = () => {
 
   return (
     <div>
-      <div>
-        {User.role === "student" && (
-          <Button
-            sx={{ backgroundColor: "buttcolor.main", marginBottom: "5px" }}
-            variant="contained"
-            endIcon={<AddCircleOutlineIcon />}
-            onClick={handleRedirect}
-          >
-            Create Query
-          </Button>
-        )}
-      </div>
-      <div
-        style={{
-          margin: "5px",
-        }}
-        className="query-main"
-      >
-        {queries.map((query) => (
+      {User.role === "student" && (
+        <>
+          <div>
+            <Button
+              sx={{ backgroundColor: "buttcolor.main", marginBottom: "5px" }}
+              variant="contained"
+              endIcon={<AddCircleOutlineIcon />}
+              onClick={handleRedirect}
+            >
+              Create Query
+            </Button>
+            )
+          </div>
           <div
             style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "space-around",
+              margin: "5px",
             }}
+            className="query-main"
           >
-            <div
-              style={{
-                margin: "5px",
-                border: "1px solid grey",
-                boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-                borderRadius: "8px",
-                width: "400px",
-              }}
-            >
-              <Typography sx={{ color: "head.main" }} m={1} variant="h5">
-                {query.querytitle}
-              </Typography>
-              <p
-                style={{
-                  overflowWrap: "break-word",
-                  margin: "5px",
-                  color: "#7E8E9F",
-                }}
-              >
-                Category : {query.category}
-              </p>
-              <p
-                style={{
-                  overflowWrap: "break-word",
-                  margin: "5px",
-                  color: "#7E8E9F",
-                }}
-              >
-                Description : {query.description}
-              </p>
-              <p
-                style={{
-                  overflowWrap: "break-word",
-                  margin: "5px",
-                  color: "#7E8E9F",
-                }}
-              >
-                Assigned to :{" "}
-                <span style={{ backgroundColor: "#FF9A28" }}>
-                  {query.assignedTo}
-                </span>
-              </p>
-
-              {/* <Button
-                variant="contained"
-                sx={{ backgroundColor: "buttcolor.main", margin: "5px" }}
-                onClick={() => handleOpen(query)}
-              >
-                {open ? "Close" : "chat"}
-              </Button> */}
-            </div>
-            {/* {open && query.quesId === openQuery.quesId && (
-              <div
-                style={{
-                  margin: "5px",
-                  border: "2px solid",
-                  minWidth: "400px",
-                }}
-              >
-                <div style={{ border: "2px solid", height: "300px" }}></div>
-                <div>
-                  <form>
-                    <textarea
-                      name="chat"
-                      id="chat"
-                      rows={5}
-                      style={{ marginTop: "5px", width: "100%" }}
-                    ></textarea>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        backgroundColor: "buttcolor.main",
-                        margin: "5px",
-                      }}
-                      type="submit"
-                    >
-                      SEND
-                    </Button>
-                  </form>
-                </div>
-              </div>
-            )} */}
-          </div>
-        ))}
-      </div>
-      {User.role === "admin" && (
-        <div>
-          {adminQueries
-            .filter((quer) => quer.assignedTo === "")
-            .map((query) => (
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent: "space-around",
-                }}
-              >
+            {queries.length === 0 ? (
+              <p style={{ margin: "5px", color: "#555A8F" }}>No queries</p>
+            ) : (
+              queries.map((query) => (
                 <div
                   style={{
-                    margin: "5px",
-                    border: "1px solid grey",
-                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-                    borderRadius: "8px",
-                    width: "400px",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "space-around",
                   }}
                 >
-                  <Typography sx={{ color: "head.main" }} m={1} variant="h5">
-                    {query.querytitle}
-                  </Typography>
-                  <p
+                  <div
                     style={{
-                      overflowWrap: "break-word",
                       margin: "5px",
-                      color: "#7E8E9F",
+                      border: "1px solid grey",
+                      boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                      borderRadius: "8px",
+                      width: "400px",
                     }}
                   >
-                    Name : {query.name}
-                  </p>
-                  <p
-                    style={{
-                      overflowWrap: "break-word",
-                      margin: "5px",
-                      color: "#7E8E9F",
-                    }}
-                  >
-                    Available : {query.from} - {query.till}
-                  </p>
-                  <p
-                    style={{
-                      overflowWrap: "break-word",
-                      margin: "5px",
-                      color: "#7E8E9F",
-                    }}
-                  >
-                    Language : {query.language}
-                  </p>
-                  <p
-                    style={{
-                      overflowWrap: "break-word",
-                      margin: "5px",
-                      color: "#7E8E9F",
-                    }}
-                  >
-                    Email : {query.email}
-                  </p>
-                  <p
-                    style={{
-                      overflowWrap: "break-word",
-                      margin: "5px",
-                      color: "#7E8E9F",
-                    }}
-                  >
-                    Category : {query.category}
-                  </p>
-                  <p
-                    style={{
-                      overflowWrap: "break-word",
-                      margin: "5px",
-                      color: "#7E8E9F",
-                    }}
-                  >
-                    Description : {query.description}
-                  </p>
-
-                  <form
-                    id="assignform"
-                    onSubmit={(e) => handleAssign(e, query)}
-                  >
-                    <label
+                    <Typography sx={{ color: "head.main" }} m={1} variant="h5">
+                      {query.querytitle}
+                    </Typography>
+                    <p
                       style={{
                         overflowWrap: "break-word",
                         margin: "5px",
                         color: "#7E8E9F",
                       }}
-                      htmlFor="assigned"
                     >
-                      Assign to :
-                    </label>
-                    <br />
-                    <input
-                      style={{ overflowWrap: "break-word", margin: "5px" }}
-                      name="assignedTo"
-                      id="assignedTo"
-                      required
-                    />
-                    &nbsp;
-                    <Button
-                      variant="contianed"
-                      type="submit"
-                      size="small"
-                      sx={{
-                        backgroundColor: "buttcolor.main",
-                        "&.MuiButtonBase-root:hover": {
-                          bgcolor: "buttcolor.main",
-                        },
-                        marginBottom: "5px",
+                      Category : {query.category}
+                    </p>
+                    <p
+                      style={{
+                        overflowWrap: "break-word",
+                        margin: "5px",
+                        color: "#7E8E9F",
                       }}
-                      id="assignbutt"
                     >
-                      assign
-                    </Button>
-                  </form>
+                      Description : {query.description}
+                    </p>
+                    <p
+                      style={{
+                        overflowWrap: "break-word",
+                        margin: "5px",
+                        color: "#7E8E9F",
+                      }}
+                    >
+                      Assigned to :{" "}
+                      <span style={{ backgroundColor: "#FF9A28" }}>
+                        {query.assignedTo}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}{" "}
+              ))
+            )}
+          </div>
+        </>
+      )}
+
+      {User.role === "admin" && (
+        <div>
+          {adminQueries.filter((quer) => quer.assignedTo === "").length ===
+          0 ? (
+            <p style={{ margin: "5px", color: "#555A8F" }}>No queries</p>
+          ) : (
+            adminQueries
+              .filter((quer) => quer.assignedTo === "")
+              .map((query) => (
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <div
+                    style={{
+                      margin: "5px",
+                      border: "1px solid grey",
+                      boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                      borderRadius: "8px",
+                      width: "400px",
+                    }}
+                  >
+                    <Typography sx={{ color: "head.main" }} m={1} variant="h5">
+                      {query.querytitle}
+                    </Typography>
+                    <p
+                      style={{
+                        overflowWrap: "break-word",
+                        margin: "5px",
+                        color: "#7E8E9F",
+                      }}
+                    >
+                      Name : {query.name}
+                    </p>
+                    <p
+                      style={{
+                        overflowWrap: "break-word",
+                        margin: "5px",
+                        color: "#7E8E9F",
+                      }}
+                    >
+                      Available : {query.from} - {query.till}
+                    </p>
+                    <p
+                      style={{
+                        overflowWrap: "break-word",
+                        margin: "5px",
+                        color: "#7E8E9F",
+                      }}
+                    >
+                      Language : {query.language}
+                    </p>
+                    <p
+                      style={{
+                        overflowWrap: "break-word",
+                        margin: "5px",
+                        color: "#7E8E9F",
+                      }}
+                    >
+                      Email : {query.email}
+                    </p>
+                    <p
+                      style={{
+                        overflowWrap: "break-word",
+                        margin: "5px",
+                        color: "#7E8E9F",
+                      }}
+                    >
+                      Category : {query.category}
+                    </p>
+                    <p
+                      style={{
+                        overflowWrap: "break-word",
+                        margin: "5px",
+                        color: "#7E8E9F",
+                      }}
+                    >
+                      Description : {query.description}
+                    </p>
+
+                    <form
+                      id="assignform"
+                      onSubmit={(e) => handleAssign(e, query)}
+                    >
+                      <label
+                        style={{
+                          overflowWrap: "break-word",
+                          margin: "5px",
+                          color: "#7E8E9F",
+                        }}
+                        htmlFor="assigned"
+                      >
+                        Assign to :
+                      </label>
+                      <br />
+                      <input
+                        style={{ overflowWrap: "break-word", margin: "5px" }}
+                        name="assignedTo"
+                        id="assignedTo"
+                        required
+                      />
+                      &nbsp;
+                      <Button
+                        variant="contianed"
+                        type="submit"
+                        size="small"
+                        sx={{
+                          backgroundColor: "buttcolor.main",
+                          "&.MuiButtonBase-root:hover": {
+                            bgcolor: "buttcolor.main",
+                          },
+                          marginBottom: "5px",
+                        }}
+                        id="assignbutt"
+                      >
+                        assign
+                      </Button>
+                    </form>
+                  </div>
+                </div>
+              ))
+          )}{" "}
         </div>
       )}
       <SnackBarComp
