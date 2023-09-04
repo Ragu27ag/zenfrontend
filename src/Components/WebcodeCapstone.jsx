@@ -359,7 +359,7 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
                               <p>
                                 Marks : <span>{res.marks}</span>
                               </p>
-                              <p>
+                              <p style={{ overflowWrap: "break-word" }}>
                                 Comments : <span>{res.comments}</span>
                               </p>
                               <Divider
