@@ -54,12 +54,20 @@ const BarComponent = () => {
     },
   };
 
-  const data = {
+  const datas = {
     labels: classData
       .sort((a, b) => {
         return a.day - b.day;
       })
-      .map((cal) => (cal.activities !== "" ? "Day-" + cal.day : "-")),
+      .map((cal) => (cal.activities !== "" ? cal.day : "-")),
+  };
+
+  const data = {
+    labels: taskData
+      .sort((a, b) => {
+        return a.day - b.day;
+      })
+      .map((cal) => (cal.marks ? "Day-" + cal.day : "-")),
     datasets: [
       {
         label: `Marks`,
@@ -67,7 +75,14 @@ const BarComponent = () => {
           .sort((a, b) => {
             return a.day - b.day;
           })
-          .map((cal) => cal.marks),
+          .map((cal) =>
+            datas.labels.reduce((acc, da) => {
+              if (da === cal.day && cal.marks) {
+                acc = cal.marks;
+              }
+              return acc;
+            }, "")
+          ),
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],

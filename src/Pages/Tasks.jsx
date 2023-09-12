@@ -44,8 +44,11 @@ const Tasks = () => {
     console.log("opened");
     setDataMsg("Submitted Successfully");
     setOpenSnack(true);
-    tasksData();
-    adminData();
+    if (User.role === "student") {
+      tasksData();
+    } else {
+      adminData();
+    }
   };
 
   const handleMarks = (e, query) => {
