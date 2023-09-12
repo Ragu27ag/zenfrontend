@@ -89,7 +89,7 @@ const MockGraph = () => {
 
   console.log(data.datasets[0].data);
   return (
-    <Box width={400} height={600}>
+    <Box width={400} height={600} mt={5}>
       <p>
         <span>Average Score : </span>
         {(

@@ -121,9 +121,7 @@ const Requirements = () => {
       {User.role === "student" ? (
         <div>
           {data.length === 0 ? (
-            <p style={{ margin: "5px", color: "#555A8F" }}>
-              Classes not yet assigned
-            </p>
+            <p style={{ margin: "5px", color: "#555A8F" }}>No requirements</p>
           ) : (
             data.map((val) => (
               <div
