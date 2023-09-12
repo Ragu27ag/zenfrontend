@@ -55,30 +55,32 @@ const BarComponent = () => {
   };
 
   const datas = {
-    labels: classData
-      .sort((a, b) => {
-        return a.day - b.day;
-      })
-      .map((cal) => (cal.activities !== "" ? cal.day : "-")),
-  };
-
-  const data = {
     labels: taskData
       .sort((a, b) => {
         return a.day - b.day;
       })
-      .map((cal) => (cal.marks ? "Day-" + cal.day : "-")),
+      .map((cal) => (cal.marks ? cal : "-")),
+  };
+
+  console.log(datas.labels);
+
+  const data = {
+    labels: classData
+      .sort((a, b) => {
+        return a.day - b.day;
+      })
+      .map((cal) => (cal.activities !== "" ? "Day-" + cal.day : "-")),
     datasets: [
       {
         label: `Marks`,
-        data: taskData
+        data: classData
           .sort((a, b) => {
             return a.day - b.day;
           })
           .map((cal) =>
             datas.labels.reduce((acc, da) => {
-              if (da === cal.day && cal.marks) {
-                acc = cal.marks;
+              if (da.day === cal.day) {
+                acc = da.marks;
               }
               return acc;
             }, "")
