@@ -1,12 +1,17 @@
 import { Button } from "@mui/material";
 import { useFormik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import * as yup from "yup";
 import ErrorIcon from "@mui/icons-material/Error";
 import backendInstance from "../Axios/axios";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+
+import logo from "./zenimage.png";
 
 const Register = () => {
+  const [load, setLoad] = useState(false);
+
   const navigate = useNavigate();
   const validation = yup.object().shape({
     name: yup.string().required("Enter the username"),
@@ -22,9 +27,13 @@ const Register = () => {
       confirmpassword: "",
     },
     onSubmit: async (data) => {
+      setLoad(true);
+      document.getElementById("registerbutt").disabled = true;
       console.log(data);
       if (data.confirmpassword !== data.password) {
         alert("Password doesnt match");
+        setLoad(false);
+        document.getElementById("registerbutt").disabled = false;
       } else {
         delete data.confirmpassword;
         const obj = {
@@ -33,8 +42,10 @@ const Register = () => {
         };
         const res = await backendInstance.post("/users/register", obj);
         if (res.data.msg === "Email already exists") {
+          setLoad(false);
           alert("Email already exists");
           document.getElementById("registerform").reset();
+          document.getElementById("registerbutt").disabled = false;
         } else if (res.data.msg === "Inserted Successfully") {
           document.getElementById("registerform").reset();
           navigate("/login");
@@ -50,8 +61,13 @@ const Register = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        position: "relative",
       }}
     >
+      <div style={{ position: "absolute", top: "0", left: "5px" }}>
+        <img src={logo} height={100} width={100} alt="logo" />
+      </div>
+
       <div
         style={{
           marginTop: "150px",
@@ -190,8 +206,9 @@ const Register = () => {
               backgroundColor: "secondary.main",
               color: "white",
             }}
+            id="registerbutt"
           >
-            Log IN{" "}
+            {load ? <CircularProgress size="15px" /> : "Register"}
           </Button>
           &nbsp;&nbsp;&nbsp;
         </form>

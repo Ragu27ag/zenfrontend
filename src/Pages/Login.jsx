@@ -1,12 +1,16 @@
 import { Button } from "@mui/material";
 import { useFormik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import * as yup from "yup";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Link, useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import backendInstance from "../Axios/axios";
+import logo from "./zenimage.png";
 
 const Login = () => {
+  const [load, setLoad] = useState(false);
   const navigate = useNavigate();
   const validation = yup.object().shape({
     email: yup.string().email().required("Enter email"),
@@ -18,15 +22,21 @@ const Login = () => {
       password: "",
     },
     onSubmit: async (data) => {
+      setLoad(true);
+      document.getElementById("loginbutt").disabled = true;
       console.log(data);
       const res = await backendInstance.post("/users/login", data);
       console.log(res.data);
       sessionStorage.setItem("user", JSON.stringify(res.data));
       console.log(res);
       if (res.data.msg === "Invalid Credentials") {
+        setLoad(false);
         alert("Invalid Credentials");
+        document.getElementById("loginbutt").disabled = false;
       } else if (res.data.msg === "User doesnt exist") {
+        setLoad(false);
         alert("User doesnt exist");
+        document.getElementById("loginbutt").disabled = false;
       } else {
         formData.resetForm();
         navigate("/");
@@ -40,8 +50,12 @@ const Login = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        position: "relative",
       }}
     >
+      <div style={{ position: "absolute", top: "0", left: "5px" }}>
+        <img src={logo} height={100} width={100} alt="logo" />
+      </div>
       <div
         style={{
           marginTop: "150px",
@@ -119,8 +133,9 @@ const Login = () => {
               backgroundColor: "secondary.main",
               color: "white",
             }}
+            id="loginbutt"
           >
-            Log IN{" "}
+            {load ? <CircularProgress size="15px" /> : "Log IN"}
           </Button>
           &nbsp;&nbsp;&nbsp;
           <Link style={{ textDecoration: "none" }} to="/register">
