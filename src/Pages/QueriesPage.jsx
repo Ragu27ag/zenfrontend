@@ -116,8 +116,8 @@ const QueriesPage = () => {
             >
               Create Query
             </Button>
-            )
           </div>
+
           <div
             style={{
               margin: "5px",
