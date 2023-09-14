@@ -93,18 +93,30 @@ const ZClasses = () => {
   };
 
   const getClass = useCallback(async () => {
-    const res = await backendInstance.get("/classes");
-    setArr(res.data);
+    try {
+      const res = await backendInstance.get("/classes");
+      setArr(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setArr]);
 
   const getAddtionalClass = useCallback(async () => {
-    const res = await backendInstance.get("/additionalClass");
-    setAddArr(res.data);
+    try {
+      const res = await backendInstance.get("/additionalClass");
+      setAddArr(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setAddArr]);
 
   const tasksData = useCallback(async () => {
-    const { data } = await backendInstance.get(`/tasks/${User.email}`);
-    setTasks(data);
+    try {
+      const { data } = await backendInstance.get(`/tasks/${User.email}`);
+      setTasks(data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [User.email, setTasks]);
 
   useEffect(() => {
@@ -139,40 +151,44 @@ const ZClasses = () => {
   console.log(currTask);
 
   const handleSubmit = async (e) => {
-    document.getElementById("submitbutt").disabled = true;
-    e.preventDefault();
-    console.log(e);
-    let taskData = "";
-    Array.from(e.target.elements).forEach((ele) => {
-      if (ele.nodeName === "INPUT") {
-        console.log(ele.value);
-        taskData = ele.value;
+    try {
+      document.getElementById("submitbutt").disabled = true;
+      e.preventDefault();
+      console.log(e);
+      let taskData = "";
+      Array.from(e.target.elements).forEach((ele) => {
+        if (ele.nodeName === "INPUT") {
+          console.log(ele.value);
+          taskData = ele.value;
+        }
+      });
+      let task = arr.filter((cla) => cla.day === classes);
+      let submitted = new Date();
+      let taskDate = submitted.getDate();
+      let taskMonth = submitted.getMonth() + 1;
+      let taskYear = submitted.getFullYear();
+      console.log(task);
+      const obj = {
+        dayTask: task[0].title,
+        day: task[0].day,
+        email: User.email,
+        url: taskData,
+        submitted: `${taskDate}/${taskMonth}/${taskYear}`,
+        evaluated: false,
+        name: User.name,
+      };
+      console.log(obj);
+      const res = await backendInstance.post("/task", obj);
+      if (res.data.msg === "Inserted Successfully") {
+        handleClick("Submitted Successfully ");
+        document.getElementById("submitform").reset();
+      } else {
+        document.getElementById("submitbutt").disabled = false;
       }
-    });
-    let task = arr.filter((cla) => cla.day === classes);
-    let submitted = new Date();
-    let taskDate = submitted.getDate();
-    let taskMonth = submitted.getMonth() + 1;
-    let taskYear = submitted.getFullYear();
-    console.log(task);
-    const obj = {
-      dayTask: task[0].title,
-      day: task[0].day,
-      email: User.email,
-      url: taskData,
-      submitted: `${taskDate}/${taskMonth}/${taskYear}`,
-      evaluated: false,
-      name: User.name,
-    };
-    console.log(obj);
-    const res = await backendInstance.post("/task", obj);
-    if (res.data.msg === "Inserted Successfully") {
-      handleClick("Submitted Successfully ");
-      document.getElementById("submitform").reset();
-    } else {
       document.getElementById("submitbutt").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
-    document.getElementById("submitbutt").disabled = false;
   };
 
   const handleAdditional = (data) => {
@@ -181,14 +197,18 @@ const ZClasses = () => {
   };
 
   const handleDelete = async (data) => {
-    document.getElementById("deletebutt").disabled = true;
+    try {
+      document.getElementById("deletebutt").disabled = true;
 
-    console.log(data);
-    const res = await backendInstance.post("/deleteClass", data);
-    if (res.data.msg === "Deleted Successfully") {
-      handleClick("Deleted Succesfully");
+      console.log(data);
+      const res = await backendInstance.post("/deleteClass", data);
+      if (res.data.msg === "Deleted Successfully") {
+        handleClick("Deleted Succesfully");
+      }
+      document.getElementById("deletebutt").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
-    document.getElementById("deletebutt").disabled = false;
   };
 
   // const handleEdit = async (data) => {
@@ -220,6 +240,7 @@ const ZClasses = () => {
         flexFlowflow: "wrap",
         gap: "24px",
         marginTop: "20px",
+        flexWrap: "wrap",
       }}
     >
       <Box

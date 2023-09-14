@@ -22,13 +22,21 @@ const QueriesPage = () => {
   const [dataMsg, setDataMsg] = React.useState("");
 
   const queryData = useCallback(async () => {
-    const { data } = await backendInstance.get(`/queries/${User.email}`);
-    setQuery(data);
+    try {
+      const { data } = await backendInstance.get(`/queries/${User.email}`);
+      setQuery(data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [User.email, setQuery]);
 
   const adminQueryData = useCallback(async () => {
-    const { data } = await backendInstance.get(`/queries`);
-    setAdminQuery(data);
+    try {
+      const { data } = await backendInstance.get(`/queries`);
+      setAdminQuery(data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setAdminQuery]);
 
   console.log(queries);
@@ -62,33 +70,37 @@ const QueriesPage = () => {
   // };
 
   const handleAssign = async (e, query) => {
-    document.getElementById("assignbutt").disabled = true;
-    e.preventDefault();
-    let obj = {};
-    Array.from(e.target.elements).forEach((ele) => {
-      if (ele.nodeName === "INPUT") {
-        obj[ele.name] = ele.value;
+    try {
+      document.getElementById("assignbutt").disabled = true;
+      e.preventDefault();
+      let obj = {};
+      Array.from(e.target.elements).forEach((ele) => {
+        if (ele.nodeName === "INPUT") {
+          obj[ele.name] = ele.value;
+        }
+      });
+
+      obj = {
+        ...obj,
+        id: query.quesId,
+        name: query.name,
+        email: query.email,
+      };
+
+      const res = await backendInstance.put("/queries", obj);
+
+      console.log(obj);
+
+      if (res.data) {
+        document.getElementById("assignform").reset();
+        handleClick();
+      } else {
+        document.getElementById("assignbutt").disabled = false;
       }
-    });
-
-    obj = {
-      ...obj,
-      id: query.quesId,
-      name: query.name,
-      email: query.email,
-    };
-
-    const res = await backendInstance.put("/queries", obj);
-
-    console.log(obj);
-
-    if (res.data) {
-      document.getElementById("assignform").reset();
-      handleClick();
-    } else {
       document.getElementById("assignbutt").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
-    document.getElementById("assignbutt").disabled = false;
   };
 
   return (

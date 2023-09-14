@@ -13,16 +13,20 @@ const Capstone = () => {
   const [result, setResult] = useState([]);
 
   const getData = useCallback(async () => {
-    const types = {
-      type: "capstone",
-    };
-    const res = await backendInstance.get("/webcodecapstone/capstone");
-    const resultData = await backendInstance.post(
-      `/webcapsubmit/${User.email}`,
-      types
-    );
-    setdata(res.data);
-    setResult(resultData.data);
+    try {
+      const types = {
+        type: "capstone",
+      };
+      const res = await backendInstance.get("/webcodecapstone/capstone");
+      const resultData = await backendInstance.post(
+        `/webcapsubmit/${User.email}`,
+        types
+      );
+      setdata(res.data);
+      setResult(resultData.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setdata, User.email]);
 
   console.log(result);

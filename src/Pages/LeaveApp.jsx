@@ -35,13 +35,21 @@ const LeaveApp = () => {
   const [adLeave, setAdLeave] = useState([]);
 
   const leaveData = useCallback(async () => {
-    const { data } = await backendInstance.get(`/leave/${User.email}`);
-    setLeave(data);
+    try {
+      const { data } = await backendInstance.get(`/leave/${User.email}`);
+      setLeave(data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [User.email, setLeave]);
 
   const getAdminData = useCallback(async () => {
-    const { data } = await backendInstance.get("/leave");
-    setAdLeave(data);
+    try {
+      const { data } = await backendInstance.get("/leave");
+      setAdLeave(data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setAdLeave]);
 
   console.log(leave);
@@ -74,27 +82,31 @@ const LeaveApp = () => {
     getAdminData();
   };
 
-  const handleApprove = (e, ldata, request) => {
-    document.getElementById("approvebutt").disabled = true;
+  const handleApprove = async (e, ldata, request) => {
+    try {
+      document.getElementById("approvebutt").disabled = true;
 
-    e.preventDefault();
+      e.preventDefault();
 
-    const dataObj = {
-      name: ldata.name,
-      email: ldata.email,
-      date: ldata.date,
-      approval: request,
-      reason: ldata.reason,
-    };
+      const dataObj = {
+        name: ldata.name,
+        email: ldata.email,
+        date: ldata.date,
+        approval: request,
+        reason: ldata.reason,
+      };
 
-    console.log(dataObj);
-    const res = backendInstance.put("/leave", dataObj);
-    if (res) {
-      handleClick(request);
-    } else {
+      console.log(dataObj);
+      const res = await backendInstance.put("/leave", dataObj);
+      if (res) {
+        handleClick(request);
+      } else {
+        document.getElementById("approvebutt").disabled = false;
+      }
       document.getElementById("approvebutt").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
-    document.getElementById("approvebutt").disabled = false;
   };
 
   return (

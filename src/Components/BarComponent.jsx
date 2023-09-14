@@ -24,10 +24,14 @@ const BarComponent = () => {
   const [classData, setClassData] = useState([]);
 
   const getData = useCallback(async () => {
-    const resTask = await backendInstance.get(`/tasks/${User.email}`);
-    setTaskData(resTask.data);
-    const resClass = await backendInstance.get(`/classes`);
-    setClassData(resClass.data);
+    try {
+      const resTask = await backendInstance.get(`/tasks/${User.email}`);
+      setTaskData(resTask.data);
+      const resClass = await backendInstance.get(`/classes`);
+      setClassData(resClass.data);
+    } catch (error) {
+      console.log(error);
+    }
 
     // setResult({ ...data });
   }, [setTaskData, User.email]);

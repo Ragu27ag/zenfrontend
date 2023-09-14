@@ -49,26 +49,30 @@ const AddQueries = () => {
     },
 
     onSubmit: async (data) => {
-      document.getElementById("submitbutt").disabled = true;
-      let id = "ZEN" + Math.floor(1000 + Math.random() * 9000);
-      const obj = {
-        ...data,
-        email: User.email,
-        quesId: id,
-        assignedTo: "",
-        name: User.name,
-      };
-      console.log(obj);
-      const res = await backendInstance.post("/queries", obj);
-      console.log(res.data);
-      if (res.data.msg === "Inserted Successfully") {
+      try {
         document.getElementById("submitbutt").disabled = true;
-        handleClick();
-        setTimeout(() => navigate("/queries"), 2000);
-      } else {
+        let id = "ZEN" + Math.floor(1000 + Math.random() * 9000);
+        const obj = {
+          ...data,
+          email: User.email,
+          quesId: id,
+          assignedTo: "",
+          name: User.name,
+        };
+        console.log(obj);
+        const res = await backendInstance.post("/queries", obj);
+        console.log(res.data);
+        if (res.data.msg === "Inserted Successfully") {
+          document.getElementById("submitbutt").disabled = true;
+          handleClick();
+          setTimeout(() => navigate("/queries"), 2000);
+        } else {
+          document.getElementById("submitbutt").disabled = false;
+        }
         document.getElementById("submitbutt").disabled = false;
+      } catch (error) {
+        console.log(error);
       }
-      document.getElementById("submitbutt").disabled = false;
     },
 
     validationSchema: validation,

@@ -27,15 +27,23 @@ const Portfolio = () => {
   };
 
   const getData = useCallback(async () => {
-    const res = await backendInstance.get(`/portfolio/${User.email}`);
-    setdata(res.data);
-    // setResult({ ...data });
+    try {
+      const res = await backendInstance.get(`/portfolio/${User.email}`);
+      setdata(res.data);
+      // setResult({ ...data });
+    } catch (error) {
+      console.log(error);
+    }
   }, [setdata, User.email]);
 
   const getAdminData = useCallback(async () => {
-    const resultData = await backendInstance.get(`/portfolio`);
-    console.log(resultData.data);
-    setResult(resultData.data);
+    try {
+      const resultData = await backendInstance.get(`/portfolio`);
+      console.log(resultData.data);
+      setResult(resultData.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setResult]);
 
   useEffect(() => {
@@ -51,61 +59,69 @@ const Portfolio = () => {
   }, [User, navigate, getData, getAdminData]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(e);
-    document.getElementById("submitbutt").disabled = true;
-    let obj = {};
-    Array.from(e.target.elements).forEach((ele) => {
-      if (ele.nodeName === "INPUT") {
-        obj[ele.name] = ele.value;
+    try {
+      e.preventDefault();
+      console.log(e);
+      document.getElementById("submitbutt").disabled = true;
+      let obj = {};
+      Array.from(e.target.elements).forEach((ele) => {
+        if (ele.nodeName === "INPUT") {
+          obj[ele.name] = ele.value;
+        }
+      });
+      obj = {
+        ...obj,
+        name: User.name,
+        email: User.email,
+        evaluated: false,
+        reviewedby: "",
+        comments: "",
+      };
+
+      const res = await backendInstance.post("/portfolio", obj);
+
+      if (res.data.msg === "Inserted Successfully") {
+        handleClick();
+        document.getElementById("submitform").reset();
+      } else {
+        document.getElementById("submitbutt").disabled = false;
       }
-    });
-    obj = {
-      ...obj,
-      name: User.name,
-      email: User.email,
-      evaluated: false,
-      reviewedby: "",
-      comments: "",
-    };
-
-    const res = await backendInstance.post("/portfolio", obj);
-
-    if (res.data.msg === "Inserted Successfully") {
-      handleClick();
-      document.getElementById("submitform").reset();
-    } else {
       document.getElementById("submitbutt").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
-    document.getElementById("submitbutt").disabled = false;
   };
 
   const handleMark = async (e, val) => {
-    document.getElementById("markbutt").disabled = true;
-    console.log(val);
-    e.preventDefault();
-    let marks = {};
-    Array.from(e.target.elements).forEach((ele) => {
-      if (ele.nodeName === "INPUT" || ele.nodeName === "TEXTAREA") {
-        marks[ele.name] = ele.value;
+    try {
+      document.getElementById("markbutt").disabled = true;
+      console.log(val);
+      e.preventDefault();
+      let marks = {};
+      Array.from(e.target.elements).forEach((ele) => {
+        if (ele.nodeName === "INPUT" || ele.nodeName === "TEXTAREA") {
+          marks[ele.name] = ele.value;
+        }
+      });
+
+      marks = {
+        ...marks,
+        email: val.email,
+        evaluated: true,
+        reviewedby: User.name,
+      };
+
+      const res = await backendInstance.put("/portfolio", marks);
+      if (res) {
+        document.getElementById("markform").reset();
+        handleClick();
+      } else {
+        document.getElementById("markbutt").disabled = false;
       }
-    });
-
-    marks = {
-      ...marks,
-      email: val.email,
-      evaluated: true,
-      reviewedby: User.name,
-    };
-
-    const res = await backendInstance.put("/portfolio", marks);
-    if (res) {
-      document.getElementById("markform").reset();
-      handleClick();
-    } else {
       document.getElementById("markbutt").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
-    document.getElementById("markbutt").disabled = false;
   };
 
   console.log(result);

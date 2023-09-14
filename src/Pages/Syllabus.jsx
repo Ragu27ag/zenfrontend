@@ -29,35 +29,45 @@ const Syllabus = () => {
   };
 
   const handleDownload = async () => {
-    const res = await backendInstance.get("/upload", { responseType: "blob" });
-    const blob = new Blob([res.data], { type: res.data.type });
-    const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = "syllabus.pdf";
-    link.click();
-    console.log(res.data.type);
+    try {
+      const res = await backendInstance.get("/upload", {
+        responseType: "blob",
+      });
+      const blob = new Blob([res.data], { type: res.data.type });
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "syllabus.pdf";
+      link.click();
+      console.log(res.data.type);
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleUpload = async (e) => {
-    document.getElementById("uploadbutt").disabled = true;
-    e.preventDefault();
-    console.log(uploadFile.current.files[0]);
-    let filup = uploadFile.current.files[0];
-    const dataObj = new FormData();
-    dataObj.append("name", name);
-    dataObj.append("file", filup);
-    const res = await backendInstance.post("/upload", dataObj);
+    try {
+      document.getElementById("uploadbutt").disabled = true;
+      e.preventDefault();
+      console.log(uploadFile.current.files[0]);
+      let filup = uploadFile.current.files[0];
+      const dataObj = new FormData();
+      dataObj.append("name", name);
+      dataObj.append("file", filup);
+      const res = await backendInstance.post("/upload", dataObj);
 
-    if (res.data.msg === "Inserted Successfully") {
-      handleClick();
-      document.getElementById("fname").value = "";
-      uploadFile.current.value = "";
-    } else {
+      if (res.data.msg === "Inserted Successfully") {
+        handleClick();
+        document.getElementById("fname").value = "";
+        uploadFile.current.value = "";
+      } else {
+        document.getElementById("uploadbutt").disabled = false;
+      }
+
       document.getElementById("uploadbutt").disabled = false;
+
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
     }
-
-    document.getElementById("uploadbutt").disabled = false;
-
-    console.log(res.data);
   };
   return (
     <div

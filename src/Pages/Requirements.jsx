@@ -34,14 +34,22 @@ const Requirements = () => {
   };
 
   const getData = useCallback(async () => {
-    const res = await backendInstance.get("/requirements");
-    // const resData = await backendInstance.get(`/applicationlist/${User.email}`);
-    setdata(res.data);
+    try {
+      const res = await backendInstance.get("/requirements");
+      // const resData = await backendInstance.get(`/applicationlist/${User.email}`);
+      setdata(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setdata]);
 
   const getAdminData = useCallback(async () => {
-    const resultData = await backendInstance.get(`/applicationlist`);
-    setResult(resultData.data);
+    try {
+      const resultData = await backendInstance.get(`/applicationlist`);
+      setResult(resultData.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setResult]);
 
   const validation = yup.object().shape({
@@ -65,43 +73,51 @@ const Requirements = () => {
       program: "",
     },
     onSubmit: async (data) => {
-      document.getElementById("submitbutt").disabled = true;
-      console.log(data);
-      const res = await backendInstance.post("/requirements", data);
-      console.log(res.data);
+      try {
+        document.getElementById("submitbutt").disabled = true;
+        console.log(data);
+        const res = await backendInstance.post("/requirements", data);
+        console.log(res.data);
 
-      if (res.data.msg === "Inserted Successfully") {
-        document.getElementById("submitform").reset();
-        handleClick("Added Successfully");
-      } else {
+        if (res.data.msg === "Inserted Successfully") {
+          document.getElementById("submitform").reset();
+          handleClick("Added Successfully");
+        } else {
+          document.getElementById("submitbutt").disabled = false;
+        }
         document.getElementById("submitbutt").disabled = false;
+      } catch (error) {
+        console.log(error);
       }
-      document.getElementById("submitbutt").disabled = false;
     },
     validationSchema: validation,
   });
 
   const handleApply = async (val, apply) => {
-    document.getElementById("applybutt").disabled = true;
-    const dataObj = {
-      ...val,
-      name: User.name,
-      email: User.email,
-      isApplied: apply,
-    };
-    console.log(1);
-    const res = await backendInstance.post(
-      `/requirements/:${User.email}`,
-      dataObj
-    );
-    console.log(2);
-    const res2 = await backendInstance.put(`/requirements`, dataObj);
+    try {
+      document.getElementById("applybutt").disabled = true;
+      const dataObj = {
+        ...val,
+        name: User.name,
+        email: User.email,
+        isApplied: apply,
+      };
+      console.log(1);
+      const res = await backendInstance.post(
+        `/requirements/:${User.email}`,
+        dataObj
+      );
+      console.log(2);
+      const res2 = await backendInstance.put(`/requirements`, dataObj);
 
-    if (res.data.msg === "Inserted Successfully" && res2.data) {
-      handleClick("Applied Successfully");
+      if (res.data.msg === "Inserted Successfully" && res2.data) {
+        handleClick("Applied Successfully");
+      }
+
+      console.log(res, res2);
+    } catch (error) {
+      console.log(error);
     }
-
-    console.log(res, res2);
   };
 
   useEffect(() => {

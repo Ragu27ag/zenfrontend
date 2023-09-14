@@ -27,30 +27,34 @@ const Register = () => {
       confirmpassword: "",
     },
     onSubmit: async (data) => {
-      setLoad(true);
-      document.getElementById("registerbutt").disabled = true;
-      console.log(data);
-      if (data.confirmpassword !== data.password) {
-        alert("Password doesnt match");
-        setLoad(false);
-        document.getElementById("registerbutt").disabled = false;
-      } else {
-        delete data.confirmpassword;
-        const obj = {
-          ...data,
-          role: "student",
-        };
-        const res = await backendInstance.post("/users/register", obj);
-        if (res.data.msg === "Email already exists") {
+      try {
+        setLoad(true);
+        document.getElementById("registerbutt").disabled = true;
+        console.log(data);
+        if (data.confirmpassword !== data.password) {
+          alert("Password doesnt match");
           setLoad(false);
-          alert("Email already exists");
-          document.getElementById("registerform").reset();
           document.getElementById("registerbutt").disabled = false;
-        } else if (res.data.msg === "Inserted Successfully") {
-          document.getElementById("registerform").reset();
-          navigate("/login");
+        } else {
+          delete data.confirmpassword;
+          const obj = {
+            ...data,
+            role: "student",
+          };
+          const res = await backendInstance.post("/users/register", obj);
+          if (res.data.msg === "Email already exists") {
+            setLoad(false);
+            alert("Email already exists");
+            document.getElementById("registerform").reset();
+            document.getElementById("registerbutt").disabled = false;
+          } else if (res.data.msg === "Inserted Successfully") {
+            document.getElementById("registerform").reset();
+            navigate("/login");
+          }
+          console.log(res);
         }
-        console.log(res);
+      } catch (error) {
+        console.log(error);
       }
     },
     validationSchema: validation,

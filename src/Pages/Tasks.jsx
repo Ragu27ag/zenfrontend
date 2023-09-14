@@ -20,13 +20,21 @@ const Tasks = () => {
   const [dataMsg, setDataMsg] = React.useState("");
 
   const tasksData = useCallback(async () => {
-    const { data } = await backendInstance.get(`/tasks/${User.email}`);
-    setTasks(data);
+    try {
+      const { data } = await backendInstance.get(`/tasks/${User.email}`);
+      setTasks(data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [User.email, setTasks]);
 
   const adminData = useCallback(async () => {
-    const { data } = await backendInstance.get(`/tasks`);
-    setAllTasks(data);
+    try {
+      const { data } = await backendInstance.get(`/tasks`);
+      setAllTasks(data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setAllTasks]);
 
   useEffect(() => {
@@ -52,33 +60,37 @@ const Tasks = () => {
   };
 
   const handleMarks = (e, query) => {
-    document.getElementById("submitbutt").disabled = true;
-    e.preventDefault();
-    let dataObj = {};
-    Array.from(e.target.elements).forEach((ele) => {
-      if (ele.nodeName === "INPUT" || ele.nodeName === "TEXTAREA") {
-        dataObj[ele.name] = ele.value;
-      }
-    });
-    console.log(dataObj);
-    if (dataObj.marks <= 0 || dataObj.marks > 10) {
-      alert("Marks should not be greater than 10 or less than 0 ");
-      document.getElementById("submitbutt").disabled = false;
-    } else {
-      dataObj = {
-        ...dataObj,
-        email: query.email,
-        day: query.day,
-        evaluated: true,
-      };
+    try {
+      document.getElementById("submitbutt").disabled = true;
+      e.preventDefault();
+      let dataObj = {};
+      Array.from(e.target.elements).forEach((ele) => {
+        if (ele.nodeName === "INPUT" || ele.nodeName === "TEXTAREA") {
+          dataObj[ele.name] = ele.value;
+        }
+      });
+      console.log(dataObj);
+      if (dataObj.marks <= 0 || dataObj.marks > 10) {
+        alert("Marks should not be greater than 10 or less than 0 ");
+        document.getElementById("submitbutt").disabled = false;
+      } else {
+        dataObj = {
+          ...dataObj,
+          email: query.email,
+          day: query.day,
+          evaluated: true,
+        };
 
-      const res = backendInstance.put("/tasks", dataObj);
-      if (res) {
-        handleClick();
-        document.getElementById("marks").value = "";
-        document.getElementById("comments").value = "";
+        const res = backendInstance.put("/tasks", dataObj);
+        if (res) {
+          handleClick();
+          document.getElementById("marks").value = "";
+          document.getElementById("comments").value = "";
+        }
+        document.getElementById("submitbutt").disabled = false;
       }
-      document.getElementById("submitbutt").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
   };
 

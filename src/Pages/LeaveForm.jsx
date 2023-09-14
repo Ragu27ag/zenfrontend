@@ -38,30 +38,34 @@ const LeaveForm = ({ open, handleClose, userMail, userName }) => {
     },
 
     onSubmit: async (data) => {
-      document.getElementById.disabled = true;
-      console.log(data.date, data.days);
-      let toDate = new Date(data.date);
-      toDate.setDate(toDate.getDate() + (data.days - 1));
-      console.log(data);
-      const obj = {
-        ...data,
-        to: toDate,
-        email: userMail,
-        approval: "",
-        name: userName,
-      };
-      console.log(obj);
-      const res = await backendInstance.post("/leave", obj);
+      try {
+        document.getElementById.disabled = true;
+        console.log(data.date, data.days);
+        let toDate = new Date(data.date);
+        toDate.setDate(toDate.getDate() + (data.days - 1));
+        console.log(data);
+        const obj = {
+          ...data,
+          to: toDate,
+          email: userMail,
+          approval: "",
+          name: userName,
+        };
+        console.log(obj);
+        const res = await backendInstance.post("/leave", obj);
 
-      if (res.data.msg === "Inserted Successfully") {
-        document.getElementById("days").value = "";
-        document.getElementById("date").value = "";
-        document.getElementById("reason").value = "";
-        handleClick();
-      } else {
+        if (res.data.msg === "Inserted Successfully") {
+          document.getElementById("days").value = "";
+          document.getElementById("date").value = "";
+          document.getElementById("reason").value = "";
+          handleClick();
+        } else {
+          document.getElementById.disabled = false;
+        }
         document.getElementById.disabled = false;
+      } catch (error) {
+        console.log(error);
       }
-      document.getElementById.disabled = false;
     },
 
     validationSchema: validation,

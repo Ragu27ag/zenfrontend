@@ -22,24 +22,28 @@ const Login = () => {
       password: "",
     },
     onSubmit: async (data) => {
-      setLoad(true);
-      document.getElementById("loginbutt").disabled = true;
-      console.log(data);
-      const res = await backendInstance.post("/users/login", data);
-      console.log(res.data);
-      sessionStorage.setItem("user", JSON.stringify(res.data));
-      console.log(res);
-      if (res.data.msg === "Invalid Credentials") {
-        setLoad(false);
-        alert("Invalid Credentials");
-        document.getElementById("loginbutt").disabled = false;
-      } else if (res.data.msg === "User doesnt exist") {
-        setLoad(false);
-        alert("User doesnt exist");
-        document.getElementById("loginbutt").disabled = false;
-      } else {
-        formData.resetForm();
-        navigate("/");
+      try {
+        setLoad(true);
+        document.getElementById("loginbutt").disabled = true;
+        console.log(data);
+        const res = await backendInstance.post("/users/login", data);
+        console.log(res.data);
+        sessionStorage.setItem("user", JSON.stringify(res.data));
+        console.log(res);
+        if (res.data.msg === "Invalid Credentials") {
+          setLoad(false);
+          alert("Invalid Credentials");
+          document.getElementById("loginbutt").disabled = false;
+        } else if (res.data.msg === "User doesnt exist") {
+          setLoad(false);
+          alert("User doesnt exist");
+          document.getElementById("loginbutt").disabled = false;
+        } else {
+          formData.resetForm();
+          navigate("/");
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
     validationSchema: validation,

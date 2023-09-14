@@ -16,25 +16,29 @@ const DoughnutComponent = () => {
   const [capData, setCapData] = useState([]);
 
   const getData = useCallback(async () => {
-    const types = {
-      type: "webcode",
-    };
-    const types1 = {
-      type: "capstone",
-    };
-    const resTask = await backendInstance.post(
-      `/webcapsubmit/${User.email}`,
-      types
-    );
-    setWebData(resTask.data);
+    try {
+      const types = {
+        type: "webcode",
+      };
+      const types1 = {
+        type: "capstone",
+      };
+      const resTask = await backendInstance.post(
+        `/webcapsubmit/${User.email}`,
+        types
+      );
+      setWebData(resTask.data);
 
-    const resTask1 = await backendInstance.post(
-      `/webcapsubmit/${User.email}`,
-      types1
-    );
-    setCapData(resTask1.data);
+      const resTask1 = await backendInstance.post(
+        `/webcapsubmit/${User.email}`,
+        types1
+      );
+      setCapData(resTask1.data);
 
-    // setResult({ ...data });
+      // setResult({ ...data })
+    } catch (error) {
+      console.log(error);
+    }
   }, [setCapData, setWebData, User.email]);
 
   ChartJs.register(Title, Tooltip, Legend, ArcElement);

@@ -18,6 +18,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Button } from "@mui/material";
+
 import SnackBarComp from "../Components/SnackBarComp";
 
 const MockInterView = () => {
@@ -34,9 +35,13 @@ const MockInterView = () => {
   const divRef = useRef(null);
 
   const getData = useCallback(async () => {
-    const res = await backendInstance.get(`/mock/${User.email}`);
-    setdata(res.data);
-    // setResult({ ...data });
+    try {
+      const res = await backendInstance.get(`/mock/${User.email}`);
+      setdata(res.data);
+      // setResult({ ...data });
+    } catch (error) {
+      console.log(error);
+    }
   }, [setdata, User.email]);
 
   // const getAdminData = useCallback(async () => {
@@ -110,18 +115,22 @@ const MockInterView = () => {
       recurl: "",
     },
     onSubmit: async (data) => {
-      document.getElementById("submitbutt").disabled = true;
-      console.log(data);
-      const res = await backendInstance.post("/mock", data);
-      console.log(res.data);
+      try {
+        document.getElementById("submitbutt").disabled = true;
+        console.log(data);
+        const res = await backendInstance.post("/mock", data);
+        console.log(res.data);
 
-      if (res.data.msg === "Inserted Successfully") {
-        handleClick();
-        document.getElementById("submitform").reset();
-      } else {
+        if (res.data.msg === "Inserted Successfully") {
+          handleClick();
+          document.getElementById("submitform").reset();
+        } else {
+          document.getElementById("submitbutt").disabled = false;
+        }
         document.getElementById("submitbutt").disabled = false;
+      } catch (error) {
+        console.log(error);
       }
-      document.getElementById("submitbutt").disabled = false;
     },
     validationSchema: validation,
   });

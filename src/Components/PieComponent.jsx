@@ -16,12 +16,16 @@ const PieComponent = () => {
   const [classData, setClassData] = useState([]);
 
   const getData = useCallback(async () => {
-    const resTask = await backendInstance.get(`/tasks/${User.email}`);
-    setTaskData(resTask.data);
-    const resClass = await backendInstance.get(`/classes`);
-    setClassData(resClass.data);
+    try {
+      const resTask = await backendInstance.get(`/tasks/${User.email}`);
+      setTaskData(resTask.data);
+      const resClass = await backendInstance.get(`/classes`);
+      setClassData(resClass.data);
 
-    // setResult({ ...data });
+      // setResult({ ...data });
+    } catch (error) {
+      console.log(error);
+    }
   }, [setTaskData, User.email]);
 
   ChartJs.register(Title, Tooltip, ArcElement, Legend);

@@ -13,21 +13,29 @@ const Webcode = () => {
   const [result, setResult] = useState([]);
 
   const getData = useCallback(async () => {
-    const types = {
-      type: "webcode",
-    };
-    const res = await backendInstance.get("/webcodecapstone/webcode");
-    const resultData = await backendInstance.post(
-      `/webcapsubmit/${User.email}`,
-      types
-    );
-    setdata(res.data);
-    setResult(resultData.data);
+    try {
+      const types = {
+        type: "webcode",
+      };
+      const res = await backendInstance.get("/webcodecapstone/webcode");
+      const resultData = await backendInstance.post(
+        `/webcapsubmit/${User.email}`,
+        types
+      );
+      setdata(res.data);
+      setResult(resultData.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [User.email, setdata, setResult]);
 
   const getAdminData = useCallback(async () => {
-    const res = await backendInstance.get("/webcapsubmit");
-    setdata(res.data);
+    try {
+      const res = await backendInstance.get("/webcapsubmit");
+      setdata(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, [setdata]);
 
   console.log(result);

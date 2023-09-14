@@ -63,101 +63,113 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(e);
-    document.getElementById("submitbutt").disabled = true;
-    Array.from(e.target.elements).forEach((ele) => {
-      if (ele.nodeName === "INPUT") {
-        obj[ele.name] = ele.value;
+    try {
+      e.preventDefault();
+      console.log(e);
+      document.getElementById("submitbutt").disabled = true;
+      Array.from(e.target.elements).forEach((ele) => {
+        if (ele.nodeName === "INPUT") {
+          obj[ele.name] = ele.value;
+        }
+      });
+      obj = {
+        ...obj,
+        name: User.name,
+        batch: descObj.batch,
+        email: User.email,
+        title: descObj.title,
+        type: descObj.type,
+        marks: "",
+        evaluated: false,
+      };
+
+      const res = await backendInstance.post("/webcapsubmit", obj);
+
+      if (res.data.msg === "Inserted Successfully") {
+        handleClick();
+        let addform = document.getElementById("submitform");
+        addform.reset();
+      } else {
+        document.getElementById("submitbutt").disabled = false;
       }
-    });
-    obj = {
-      ...obj,
-      name: User.name,
-      batch: descObj.batch,
-      email: User.email,
-      title: descObj.title,
-      type: descObj.type,
-      marks: "",
-      evaluated: false,
-    };
 
-    const res = await backendInstance.post("/webcapsubmit", obj);
-
-    if (res.data.msg === "Inserted Successfully") {
-      handleClick();
-      let addform = document.getElementById("submitform");
-      addform.reset();
-    } else {
       document.getElementById("submitbutt").disabled = false;
+
+      console.log(obj);
+    } catch (error) {
+      console.log(error);
     }
-
-    document.getElementById("submitbutt").disabled = false;
-
-    console.log(obj);
   };
 
   const handleAdd = async (e) => {
-    document.getElementById("submitbutt").disabled = true;
-    e.preventDefault();
-    console.log(e);
-    Array.from(e.target.elements).forEach((ele) => {
-      if (ele.nodeName === "INPUT" || ele.nodeName === "TEXTAREA") {
-        obj[ele.name] = ele.value;
+    try {
+      document.getElementById("submitbutt").disabled = true;
+      e.preventDefault();
+      console.log(e);
+      Array.from(e.target.elements).forEach((ele) => {
+        if (ele.nodeName === "INPUT" || ele.nodeName === "TEXTAREA") {
+          obj[ele.name] = ele.value;
+        }
+      });
+      obj = {
+        ...obj,
+        email: User.email,
+        terms: terms,
+      };
+
+      console.log(obj);
+      const res = await backendInstance.post("/webcodecapstone", obj);
+      if (res.data.msg === "Inserted Successfully") {
+        handleClick();
+        document.getElementById("addform").reset();
+      } else {
+        document.getElementById("submitbutt").disabled = false;
       }
-    });
-    obj = {
-      ...obj,
-      email: User.email,
-      terms: terms,
-    };
 
-    console.log(obj);
-    const res = await backendInstance.post("/webcodecapstone", obj);
-    if (res.data.msg === "Inserted Successfully") {
-      handleClick();
-      document.getElementById("addform").reset();
-    } else {
       document.getElementById("submitbutt").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
-
-    document.getElementById("submitbutt").disabled = false;
   };
 
   const handleMark = async (e, val) => {
-    document.getElementById("markbutton").disabled = true;
-    console.log(val);
-    e.preventDefault();
-    let marks = {};
-    Array.from(e.target.elements).forEach((ele) => {
-      if (ele.nodeName === "INPUT" || ele.nodeName === "TEXTAREA") {
-        marks[ele.name] = ele.value;
-      }
-    });
+    try {
+      document.getElementById("markbutton").disabled = true;
+      console.log(val);
+      e.preventDefault();
+      let marks = {};
+      Array.from(e.target.elements).forEach((ele) => {
+        if (ele.nodeName === "INPUT" || ele.nodeName === "TEXTAREA") {
+          marks[ele.name] = ele.value;
+        }
+      });
 
-    if (marks.marks > 10 || marks.marks <= 0) {
-      alert("Marks should not be greater than 10 or less than 0 ");
-      document.getElementById("markbutton").disabled = false;
-    } else {
-      marks = {
-        ...marks,
-        email: val.email,
-        type: val.type,
-        title: val.title,
-        evaluated: true,
-      };
-
-      const res = await backendInstance.put("/webcapsubmit", marks);
-
-      if (res) {
-        handleClick();
-        let addform = document.getElementById("markform");
-        addform.reset();
+      if (marks.marks > 10 || marks.marks <= 0) {
+        alert("Marks should not be greater than 10 or less than 0 ");
+        document.getElementById("markbutton").disabled = false;
       } else {
+        marks = {
+          ...marks,
+          email: val.email,
+          type: val.type,
+          title: val.title,
+          evaluated: true,
+        };
+
+        const res = await backendInstance.put("/webcapsubmit", marks);
+
+        if (res) {
+          handleClick();
+          let addform = document.getElementById("markform");
+          addform.reset();
+        } else {
+          document.getElementById("markbutton").disabled = false;
+        }
+
         document.getElementById("markbutton").disabled = false;
       }
-
-      document.getElementById("markbutton").disabled = false;
+    } catch (error) {
+      console.log(error);
     }
   };
 

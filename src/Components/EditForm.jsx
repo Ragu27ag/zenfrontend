@@ -57,45 +57,49 @@ const EditForm = ({ arr, open, handleClose, getClass, getAdditionalClass }) => {
       type: "",
     },
     onSubmit: async (data) => {
-      document.getElementById("submitbutt").disabled = true;
-      let allow = true;
-      console.log(data);
-      arr.forEach((cla) => {
-        if (cla.day === data.day && data.type === "roadmap") {
+      try {
+        document.getElementById("submitbutt").disabled = true;
+        let allow = true;
+        console.log(data);
+        arr.forEach((cla) => {
+          if (cla.day === data.day && data.type === "roadmap") {
+            alert(
+              "Class already exist either delete the existing one or edit the existing one"
+            );
+            allow = false;
+          }
+        });
+
+        if (Number(data.day) > 40) {
           alert(
-            "Class already exist either delete the existing one or edit the existing one"
+            "Roadmap sessions are full try adding this as additional session"
           );
           allow = false;
         }
-      });
 
-      if (Number(data.day) > 40) {
-        alert(
-          "Roadmap sessions are full try adding this as additional session"
-        );
-        allow = false;
-      }
+        if (data.type === "additional" && allow) {
+          const res = await backendInstance.post("/additionalClass", data);
+          if (res.data.msg === "Inserted Successfully") {
+            handleClick();
+          } else {
+            document.getElementById("submitbutt").disabled = false;
+          }
 
-      if (data.type === "additional" && allow) {
-        const res = await backendInstance.post("/additionalClass", data);
-        if (res.data.msg === "Inserted Successfully") {
-          handleClick();
-        } else {
-          document.getElementById("submitbutt").disabled = false;
+          console.log(res.data);
         }
-
-        console.log(res.data);
-      }
-      if (data.type === "roadmap" && allow) {
-        const res = await backendInstance.post("/classes", data);
-        if (res.data.msg === "Inserted Successfully") {
-          handleClick();
-        } else {
-          document.getElementById("submitbutt").disabled = false;
+        if (data.type === "roadmap" && allow) {
+          const res = await backendInstance.post("/classes", data);
+          if (res.data.msg === "Inserted Successfully") {
+            handleClick();
+          } else {
+            document.getElementById("submitbutt").disabled = false;
+          }
+          console.log(res.data);
         }
-        console.log(res.data);
+        document.getElementById("submitbutt").disabled = false;
+      } catch (error) {
+        console.log(error);
       }
-      document.getElementById("submitbutt").disabled = false;
 
       // if (res.data.msg === "Inserted Successfully") {
       // }
