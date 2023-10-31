@@ -18,7 +18,7 @@ import MockInterView from "./Pages/MockInterView";
 import Dashboard from "./Pages/Dashboard";
 import io from "socket.io-client";
 
-export const socket = io.connect(REACT_APP_URL);
+export const socket = io.connect(process.env.REACT_APP_URL);
 
 function App() {
   const theme = createTheme({
