@@ -16,6 +16,9 @@ import Requirements from "./Pages/Requirements";
 import Portfolio from "./Pages/Portfolio";
 import MockInterView from "./Pages/MockInterView";
 import Dashboard from "./Pages/Dashboard";
+import io from "socket.io-client";
+
+export const socket = io.connect("http://localhost:5000");
 
 function App() {
   const theme = createTheme({

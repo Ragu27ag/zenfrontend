@@ -4,6 +4,8 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useNavigate } from "react-router-dom";
 import backendInstance from "../Axios/axios";
 import SnackBarComp from "../Components/SnackBarComp";
+import { socket } from "../App.js";
+import Chat from "./Chat";
 
 const QueriesPage = () => {
   const User = useMemo(
@@ -14,6 +16,10 @@ const QueriesPage = () => {
   const navigate = useNavigate();
   const [queries, setQuery] = useState([]);
   const [adminQueries, setAdminQuery] = useState([]);
+  const [room, setRoom] = useState("");
+  const [chat, setChat] = useState(false);
+  const username = User.name;
+  // const room = User.name;
   // const [open, setOpen] = useState(false);
   // const [openQuery, setOpenQuery] = useState({});
 
@@ -103,6 +109,16 @@ const QueriesPage = () => {
     }
   };
 
+  const handleChat = (id) => {
+    let temp = id;
+    setRoom(id);
+    console.log(room);
+    socket.emit("join_room", temp);
+    setChat(!chat);
+  };
+
+  console.log(room);
+
   return (
     <div>
       {User.role === "student" && (
@@ -177,7 +193,27 @@ const QueriesPage = () => {
                         {query.assignedTo}
                       </span>
                     </p>
+                    <div>
+                      {query.assignedTo === "" && (
+                        <Button
+                          variant="contained"
+                          onClick={() => handleChat(query.quesId)}
+                          sx={{
+                            backgroundColor: "buttcolor.main",
+                            "&.MuiButtonBase-root:hover": {
+                              bgcolor: "buttcolor.main",
+                            },
+                            margin: "5px",
+                          }}
+                        >
+                          Chat
+                        </Button>
+                      )}
+                    </div>
                   </div>
+                  {chat && query.quesId === room && (
+                    <Chat room={room} username={username} socket={socket} />
+                  )}
                 </div>
               ))
             )}
@@ -306,7 +342,25 @@ const QueriesPage = () => {
                         assign
                       </Button>
                     </form>
+                    <div>
+                      <Button
+                        variant="contained"
+                        onClick={() => handleChat(query.quesId)}
+                        sx={{
+                          backgroundColor: "buttcolor.main",
+                          "&.MuiButtonBase-root:hover": {
+                            bgcolor: "buttcolor.main",
+                          },
+                          margin: "5px",
+                        }}
+                      >
+                        Chat
+                      </Button>
+                    </div>
                   </div>
+                  {chat && query.quesId === room && (
+                    <Chat room={room} username={username} socket={socket} />
+                  )}
                 </div>
               ))
           )}{" "}
