@@ -229,6 +229,7 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
                               <span
                                 style={{
                                   border: "1px solid #FF9828",
+                                  padding: "1px",
                                 }}
                               >
                                 {" "}
@@ -256,6 +257,7 @@ const WebcodeCapstone = ({ data, User, result, handleClose }) => {
                   border: "1px solid grey",
                   boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
                   borderRadius: "8px",
+                  padding: "5px",
                 }}
               >
                 <div

@@ -302,7 +302,7 @@ const ZClasses = () => {
                 data.day === "" ? (
                   <p>"Classes not assigned"</p>
                 ) : (
-                  <div style={{ margin: "2px" }}>
+                  <div style={{ margin: "2px", padding: "5px" }}>
                     <Typography sx={{ color: "head.main" }} variant="h5">
                       Day - {data.day}&nbsp;
                       {data.title}
@@ -435,7 +435,7 @@ const ZClasses = () => {
             addArr
               .filter((add) => add.title === currAdd)
               .map((data) => (
-                <div style={{ margin: "2px" }}>
+                <div style={{ margin: "2px", padding: "5px" }}>
                   <Typography variant="h5">
                     Day - {data.day}&nbsp;
                     {data.title}
@@ -515,6 +515,7 @@ const ZClasses = () => {
             width: "310px",
             borderRadius: "8px",
             boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+            padding: "3px",
           }}
         >
           <div>
@@ -620,6 +621,7 @@ const ZClasses = () => {
             marginTop: "10px",
             boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
             borderRadius: "8px",
+            padding: "5px",
           }}
         >
           <Typography sx={{ color: "head.main" }} variant="h6">
