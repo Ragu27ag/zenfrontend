@@ -2,55 +2,19 @@ import { Box, Button, IconButton, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { deepOrange, deepPurple } from "@mui/material/colors";
 
-import EditForm from "../Components/EditForm.jsx";
-import SnackBarComp from "../Components/SnackBarComp.jsx";
 import backendInstance from "../Axios/axios.js";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ModeCommentIcon from "@mui/icons-material/ModeComment";
+import CommentBox from "../Components/CommentBox.jsx";
+import SendIcon from "@mui/icons-material/Send";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import ErrorIcon from "@mui/icons-material/Error";
+import Avatar from "@mui/material/Avatar";
 
 const ZClasses = () => {
-  const classList = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "10",
-    "9",
-    "8",
-    "7",
-    "6",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "20",
-    "19",
-    "18",
-    "17",
-    "16",
-    "21",
-    "22",
-    "23",
-    "24",
-    "25",
-    "30",
-    "29",
-    "28",
-    "27",
-    "26",
-    "31",
-    "32",
-    "33",
-    "34",
-    "35",
-    "40",
-    "39",
-    "38",
-    "37",
-    "36",
-  ];
-
   const User = useMemo(
     () => JSON.parse(sessionStorage.getItem("user")) || {},
     []
@@ -58,19 +22,15 @@ const ZClasses = () => {
 
   const navigate = useNavigate();
 
-  const [classes, setClasses] = useState("1");
-
   const [arr, setArr] = useState([]);
 
-  const [addArr, setAddArr] = useState([]);
-
-  const [addOpen, setAddOpen] = useState(false);
-
-  const [currAdd, setCurrAdd] = useState("");
+  const [likes, setLikes] = useState([]);
 
   const [tasks, setTasks] = useState([]);
 
   const [currTask, setCurrTask] = useState(null);
+
+  const [comment, setComments] = useState([]);
 
   // const [type, setType] = React.useState("");
 
@@ -84,581 +44,383 @@ const ZClasses = () => {
 
   const [openSnack, setOpenSnack] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(!open);
-  };
+  const validation = yup.object().shape({
+    comment: yup.string().required("Enter comment"),
+  });
+
+  const formVal = useFormik({
+    initialValues: {
+      comment: "",
+      user_id: "",
+      post_id: "",
+    },
+    onSubmit: async (data) => {
+      try {
+        document.getElementById("submitbutt").disabled = true;
+        console.log(data);
+        let obj = {
+          ...data,
+          product_name: arr.product_name,
+          product_image_url: arr.product_image_url,
+          product_price: arr.product_price,
+          product_id: arr.product_id,
+          market_id: arr.market_id,
+          date_of_delivery: "",
+          order_status: "Order Placed",
+        };
+        const res = await backendInstance.post("/api/v1/add-order", obj);
+        console.log("res", res);
+        if (res.data.message === "Inserted Successfully") {
+          formVal.resetForm();
+          handleClick();
+        } else {
+          document.getElementById("submitbutt").disabled = false;
+        }
+        console.log(res.arr);
+        document.getElementById("submitbutt").disabled = false;
+      } catch (error) {
+        document.getElementById("submitbutt").disabled = false;
+        console.log(error);
+      }
+
+      // if (res.arr.msg === "Inserted Successfully") {
+      // }
+    },
+    validationSchema: validation,
+  });
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const getClass = useCallback(async () => {
+  const getPost = useCallback(async () => {
     try {
-      const res = await backendInstance.get("/classes");
-      setArr(res.data);
+      const res = await backendInstance.post("/api/v1/get-post", {});
+      setArr(res.data.data);
     } catch (error) {
       console.log(error);
     }
   }, [setArr]);
 
-  const getAddtionalClass = useCallback(async () => {
+  const getlikes = useCallback(async () => {
     try {
-      const res = await backendInstance.get("/additionalClass");
-      setAddArr(res.data);
+      const res = await backendInstance.post("/api/v1/get-post-likes", {
+        user_id: User[0].user_id,
+      });
+      console.log("likes list", res.data.data);
+      setLikes(res.data.data.map((data) => data?.post_id));
     } catch (error) {
       console.log(error);
     }
-  }, [setAddArr]);
-
-  const tasksData = useCallback(async () => {
-    try {
-      const { data } = await backendInstance.get(`/tasks/${User.email}`);
-      setTasks(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [User.email, setTasks]);
+  }, [setLikes]);
 
   useEffect(() => {
     if (Object.keys(User).length === 0) {
       navigate("/login");
     } else {
-      if (User.role === "student") {
-        tasksData();
-      }
-      getClass();
-      getAddtionalClass();
+      getPost();
+      getlikes();
     }
-  }, [getClass, navigate, User, tasksData, getAddtionalClass]);
+  }, [getPost, navigate, User]);
 
   console.log(tasks);
-  console.log(arr);
+  console.log("arr", arr);
+  console.log("likes", likes);
 
-  const handleClass = (no) => {
-    setAddOpen(false);
-    console.log(no);
-    setClasses(no);
-    for (var i = 0; i < tasks.length; i++) {
-      if (tasks[i].day === no) {
-        console.log(Number(tasks[i].day));
-        setCurrTask(tasks[i].url);
-        break;
-      } else {
-        setCurrTask(null);
-      }
-    }
-  };
   console.log(currTask);
-
-  const handleSubmit = async (e) => {
-    try {
-      document.getElementById("submitbutt").disabled = true;
-      e.preventDefault();
-      console.log(e);
-      let taskData = "";
-      Array.from(e.target.elements).forEach((ele) => {
-        if (ele.nodeName === "INPUT") {
-          console.log(ele.value);
-          taskData = ele.value;
-        }
-      });
-      let task = arr.filter((cla) => cla.day === classes);
-      let submitted = new Date();
-      let taskDate = submitted.getDate();
-      let taskMonth = submitted.getMonth() + 1;
-      let taskYear = submitted.getFullYear();
-      console.log(task);
-      const obj = {
-        dayTask: task[0].title,
-        day: task[0].day,
-        email: User.email,
-        url: taskData,
-        submitted: `${taskDate}/${taskMonth}/${taskYear}`,
-        evaluated: false,
-        name: User.name,
-      };
-      console.log(obj);
-      const res = await backendInstance.post("/task", obj);
-      if (res.data.msg === "Inserted Successfully") {
-        handleClick("Submitted Successfully ");
-        document.getElementById("submitform").reset();
-      } else {
-        document.getElementById("submitbutt").disabled = false;
-      }
-      document.getElementById("submitbutt").disabled = false;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleAdditional = (data) => {
-    setAddOpen(true);
-    setCurrAdd(data.title);
-  };
-
-  const handleDelete = async (data) => {
-    try {
-      document.getElementById("deletebutt").disabled = true;
-
-      console.log(data);
-      const res = await backendInstance.post("/deleteClass", data);
-      if (res.data.msg === "Deleted Successfully") {
-        handleClick("Deleted Succesfully");
-      }
-      document.getElementById("deletebutt").disabled = false;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // const handleEdit = async (data) => {
-  //   setType("edit");
-  //   setEditData({ ...data });
-  //   handleClickOpen();
-  // };
-
-  // const handleAddtionalEdit = async (data) => {
-  //   setEditAddData({ ...data });
-  //   handleClickOpen();
-  // };
 
   const handleClick = (msg) => {
     console.log("opened");
     setDataMsg(msg);
     setCurrTask(document.getElementById("task").value);
-    getClass();
-    getAddtionalClass();
-    tasksData();
+    getPost();
     setOpenSnack(true);
   };
 
+  const handleLike = async (data) => {
+    try {
+      console.log("handle like");
+      let obj = {
+        post_id: data.post_id,
+        user_id: User[0].user_id,
+      };
+      const res = await backendInstance.post("/api/v1/add-post-likes", obj);
+      if (res.data.message === "Liked Successfully") {
+        await getlikes();
+        await getPost();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleComment = async (data) => {
+    try {
+      console.log("handle comment");
+      let obj = {
+        post_id: data.post_id,
+      };
+      const res = await backendInstance.post("/api/v1/get-post-comments", obj);
+      if (res.data.message === "Comments") {
+        setComments(res.data.data);
+        setOpen(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <div
-      className="main-div"
-      style={{
-        display: "flex",
-        flexFlowflow: "wrap",
-        gap: "24px",
-        marginTop: "20px",
-        flexWrap: "wrap",
-      }}
-    >
-      <Box
-        sx={{
-          flex: "1 1",
-          overflow: "auto",
-          minWidth: "380px",
-          alignSelf: "stretch",
-          flexGrow: "1",
+    <>
+      <h1>Feeds</h1>
+      <div
+        className="main-div"
+        style={{
+          display: "flex",
+          flexFlowflow: "wrap",
+          gap: "24px",
+          marginTop: "20px",
+          flexWrap: "wrap",
         }}
       >
         <Box
           sx={{
-            backgroundColor: "secondary.main",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-            color: "white",
-            borderRadius: "8px",
+            flex: "1 1",
+            overflow: "auto",
+            minWidth: "380px",
+            alignSelf: "stretch",
+            flexGrow: "1",
           }}
         >
-          <Typography m={1} variant="h6">
-            Please watch the recording.
-          </Typography>
-          <Button
-            sx={{
-              backgroundColor: "buttcolor.main",
-              marginTop: "10px",
-              marginRight: "10px",
-              height: "30px",
-              fontSize: "15px",
-              color: "white",
-            }}
-            variant="contained"
-          >
-            Play Recording
-          </Button>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-            borderRadius: "8px",
-            border: "1px solid grey",
-            marginTop: "5px",
-            boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-          }}
-        >
-          {!addOpen && arr.filter((val) => val.day === classes).length === 0 ? (
-            <p style={{ margin: "5px", color: "#555A8F" }}>
-              Classes not yet assigned
-            </p>
-          ) : (
-            !addOpen &&
-            arr
-              .filter((val) => val.day === classes)
-              .map((data) =>
-                data.day === "" ? (
-                  <p>"Classes not assigned"</p>
-                ) : (
-                  <div style={{ margin: "2px", padding: "5px" }}>
-                    <Typography sx={{ color: "head.main" }} variant="h5">
-                      Day - {data.day}&nbsp;
-                      {data.title}
-                    </Typography>
-                    <p style={{ color: "#7E8E9F" }}>
-                      ON : {data.date} From : {data.time}
-                    </p>
-                    <p style={{ color: "#7E8E9F" }}>Contents</p>
-                    {data.contents.split("\n").map((con) => (
-                      <div style={{ paddingLeft: "12px" }}>
-                        <li style={{ color: "#7E8E9F" }}>{con}</li>
-                      </div>
-                    ))}
-                    <p style={{ color: "#7E8E9F" }}>Pre-read</p>
-                    {data.preread.split("\n").map((con) => (
-                      <div style={{ paddingLeft: "12px" }}>
-                        <li style={{ color: "#7E8E9F" }}>{con}</li>
-                      </div>
-                    ))}
-                    {User.role === "student" && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          justifyContent: "space-between",
-                          marginTop: "5px",
-                        }}
-                      >
-                        {" "}
-                        <div
-                          style={{
-                            margin: "10px",
-                          }}
-                        >
-                          {data.activities !== "" ? (
-                            <>
-                              <Typography
-                                sx={{ color: "head.main" }}
-                                variant="h6"
-                              >
-                                Activities
-                              </Typography>
-                              <p style={{ color: "#7E8E9F" }}>
-                                {data.activities}
-                              </p>
-                              <form id="submitform" onSubmit={handleSubmit}>
-                                <input
-                                  name="task"
-                                  id="task"
-                                  type="url"
-                                  style={{ width: "90%", margin: "5px" }}
-                                  defaultValue={
-                                    currTask !== null ? currTask : ""
-                                  }
-                                  required
-                                />
-                                <br />
-                                <br />
-
-                                {currTask === null ? (
-                                  <div style={{ textAlign: "end" }}>
-                                    <Button
-                                      type="submit"
-                                      variant="contanied"
-                                      sx={{
-                                        backgroundColor: "secondary.main",
-                                        color: "white",
-                                        margin: "5px",
-                                        "&.MuiButtonBase-root:hover": {
-                                          backgroundColor: "secondary.main",
-                                        },
-                                      }}
-                                      id="submitbutt"
-                                    >
-                                      Submit
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <span style={{ backgroundColor: "#FF9A28" }}>
-                                    Submitted
-                                  </span>
-                                )}
-                              </form>
-                            </>
-                          ) : (
-                            <div>No Activities</div>
-                          )}
-                        </div>
-                      </Box>
-                    )}
-                    {User.role === "admin" && (
-                      <>
-                        {" "}
-                        <div style={{ marginTop: "15px" }}>
-                          {/* <Button
-                          size="small"
-                          variant="contained"
-                          sx={{ backgroundColor: "buttcolor.main" }}
-                          onClick={() => handleEdit(data)}
-                        >
-                          edit
-                        </Button>{" "} */}
-                          &nbsp;&nbsp;
-                          <Button
-                            size="small"
-                            variant="contained"
-                            sx={{
-                              backgroundColor: "buttcolor.main",
-                              marginBottom: "5px",
-                            }}
-                            id="deletebutt"
-                            onClick={() => handleDelete(data)}
-                          >
-                            delete
-                          </Button>{" "}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )
-              )
-          )}
-          {addOpen &&
-          addArr.filter((add) => add.title === currAdd).length === 0 ? (
-            <p style={{ margin: "5px", color: "#555A8F" }}>
-              Classes not yet assigned
-            </p>
-          ) : (
-            addOpen &&
-            addArr
-              .filter((add) => add.title === currAdd)
-              .map((data) => (
-                <div style={{ margin: "2px", padding: "5px" }}>
-                  <Typography variant="h5">
-                    Day - {data.day}&nbsp;
-                    {data.title}
-                  </Typography>
-                  <p style={{ color: "#7E8E9F" }}>
-                    {data.date} {data.time}
-                  </p>
-                  {User.role === "admin" && (
-                    <>
-                      {" "}
-                      <div style={{ marginTop: "15px" }}>
-                        {/* <Button
-                          size="small"
-                          variant="contained"
-                          sx={{ backgroundColor: "buttcolor.main" }}
-                          onClick={() => handleAddtionalEdit(data)}
-                        >
-                          edit
-                        </Button> */}
-                        &nbsp;&nbsp;
-                        <Button
-                          size="small"
-                          variant="contained"
-                          sx={{
-                            backgroundColor: "buttcolor.main",
-                            marginBottom: "5px",
-                          }}
-                          onClick={() => handleDelete(data)}
-                          id="deleteAddiButt"
-                        >
-                          delete
-                        </Button>
-                      </div>{" "}
-                    </>
-                  )}
-                </div>
-              ))
-          )}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-
-            borderRadius: "8px",
-
-            marginTop: "5px",
-          }}
-        >
-          {User.role === "admin" && (
-            <>
-              <Button
-                variant="contanied"
-                sx={{
-                  backgroundColor: "buttcolor.main",
-                  color: "black",
-                  margin: "5px",
-                  "&.MuiButtonBase-root:hover": {
-                    backgroundColor: "buttcolor.main",
-                  },
-                }}
-                onClick={handleClickOpen}
-                disableRipple
-              >
-                Add
-              </Button>
-            </>
-          )}
-        </Box>
-      </Box>
-      <Box>
-        <Box
-          sx={{
-            border: "1px solid grey",
-            height: "450px",
-            width: "310px",
-            borderRadius: "8px",
-            boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-            padding: "3px",
-          }}
-        >
-          <div>
-            <Typography sx={{ color: "head.main" }} variant="h6">
-              Sessions Roadmap
-            </Typography>
-          </div>
           <Box
             sx={{
-              flexGrow: "1",
-              textAlign: "center",
-              paddingTop: "30px",
-              paddingLeft: "8px",
+              backgroundColor: "secondary.main",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              color: "white",
+              borderRadius: "8px",
+            }}
+          ></Box>
+          <Box
+            sx={{
+              // display: "flex",
+              // flexWrap: "wrap",
+              // justifyContent: "space-between",
+              // alignItems: "center",
+              borderRadius: "8px",
+              // boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+              margin: "5% 10% 10% 10%",
+              maxWidth: "800px",
             }}
           >
-            <Grid container rowSpacing={2} columnSpacing={{ xs: 8 }}>
-              {classList.map((val, i) => (
-                <Grid item xs={2} key={i}>
-                  <div style={{ display: "flex", position: "relative" }}>
-                    <IconButton
-                      sx={{
-                        backgroundColor: "secondary.main",
-                        color: "white",
-                        width: "33px",
-                      }}
-                      size="small"
-                      variant="contained"
-                      disableRipple
-                      onClick={() => handleClass(val)}
-                    >
-                      {val}
-                    </IconButton>
-                    <div style={{}}>
-                      {(val % 5 !== 0 &&
-                        val !== "6" &&
-                        val !== "16" &&
-                        val !== "26" &&
-                        val !== "36") ||
-                      val === "40" ? (
-                        <hr
-                          style={{
-                            width: "30px",
-                            height: "5px",
-                            backgroundColor: "#7E8E9F",
-                            marginTop: "12px",
-                          }}
-                        />
-                      ) : val % 5 === 0 && val % 2 === 0 && val !== 40 ? (
-                        <>
-                          {" "}
-                          <hr
-                            style={{
-                              width: "30px",
-                              height: "5px",
-                              backgroundColor: "#7E8E9F",
-                              marginTop: "12px",
-                            }}
-                          />{" "}
-                          <div
-                            style={{
-                              borderLeft: "thick solid #7E8E9F",
-                              height: "20px",
-                              position: "absolute",
-                              left: "10px",
-                              top: "29px",
-                            }}
-                          ></div>
-                        </>
-                      ) : val % 5 === 0 && val % 2 !== 0 && val !== "40" ? (
-                        <div
-                          style={{
-                            borderLeft: "thick solid #7E8E9F",
-                            height: "20px",
-                            position: "absolute",
-                            left: "10px",
-                            top: "29px",
-                          }}
-                        ></div>
-                      ) : (
-                        <div></div>
-                      )}
-                    </div>
-                  </div>
-                  {/* {val % 5 === 0 && (
+            {arr.length === 0 ? (
+              <p style={{ margin: "5px", color: "#555A8F" }}>
+                No feed to show.
+              </p>
+            ) : (
+              arr.map((data) => (
+                <div
+                  style={{
+                    height: "600px",
+                    margin: "15px",
+                    borderRadius: "8px",
+                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                  }}
+                >
+                  <Avatar
+                    sx={{
+                      bgcolor: deepOrange[500],
+                      display: "inline-flex",
+                      margin: "6px",
+                    }}
+                  >
+                    {data?.market_name?.charAt(0)}
+                  </Avatar>
+                  <p
+                    style={{
+                      margin: "5px",
+                      color: "#555A8F",
+                      display: "inline-flex",
+                      fontSize: "15px",
+                      fontWeight: "bolder",
+                      color: "black",
+                    }}
+                  >
+                    {data?.market_name}
+                  </p>
+                  <p
+                    style={{
+                      margin: "5px",
+                      color: "#555A8F",
+                      fontSize: "12px",
+                    }}
+                  >
+                    {data?.created_at}
+                  </p>
+                  <p
+                    style={{
+                      margin: "5px",
+                      fontSize: "15px",
+                      fontWeight: "bolder",
+                      color: "black",
+                    }}
+                  >
+                    {data?.post_description}
+                  </p>
+                  <div
+                    style={{
+                      border: "2px solid black",
+                      height: "350px",
+                      margin: "5px",
+                      borderRadius: "8px",
+                      border: "1px solid grey",
+                    }}
+                  >
+                    {data.post_type == "Image" ? (
+                      <img
+                        src={data.post_url}
+                        alt=""
+                        style={{
+                          height: "100%",
+                          width: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src="https://www.youtube.com/embed/BAOdoV7jQVo?autoplay=1&mute=1"
+                        title="YouTube video"
+                        style={{ border: "none" }}
+                        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    )}
                     <div
                       style={{
-                        borderLeft: "thick solid black",
-                        height: "10px",
-                        position: "absolute",
-                        left: "10px",
+                        height: "45px",
+                        margin: "2px",
+                        padding: "5px",
+                        display: "flex",
+                        // justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        flexWrap: "wrap",
                       }}
-                    ></div>
-                  )} */}
-                </Grid>
-              ))}
-            </Grid>
+                    >
+                      <div
+                        style={{
+                          width: "50px",
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <button
+                          style={{ background: "none", border: "none" }}
+                          onClick={(e) => {
+                            handleLike(data);
+                          }}
+                        >
+                          <ThumbUpIcon
+                            sx={{
+                              color: likes.find((val) => val == data.post_id)
+                                ? "blue"
+                                : "none",
+                            }}
+                          />
+                        </button>
+                        <span>{data.likes_count}</span>
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <button
+                          style={{ background: "none", border: "none" }}
+                          onClick={(e) => {
+                            handleComment(data);
+                          }}
+                        >
+                          <ModeCommentIcon />
+                        </button>
+                        <span>{data.comments_count}</span>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        height: "45px",
+                        margin: "5px",
+                        borderRadius: "8px",
+                        border: "1px solid grey",
+                        padding: "8px",
+                        position: "relative",
+                      }}
+                    >
+                      <form id="orderform" onSubmit={formVal.handleSubmit}>
+                        <textarea
+                          name="comment"
+                          type="comment"
+                          id="comment"
+                          value={formVal.values.comment}
+                          onChange={formVal.handleChange}
+                          onBlur={formVal.handleBlur}
+                          placeholder="comment"
+                          style={{
+                            width: "100%",
+                            border: "none",
+                            borderBottom: "1px solid grey",
+                            outline: "none",
+                          }}
+                        />
+                        <br />
+                        {formVal.touched.comment && formVal.errors.comment && (
+                          <div
+                            style={{
+                              color: "red",
+                              fontSize: "15px",
+                              position: "absolute",
+                              top: "8px",
+                              right: "60px",
+                            }}
+                          >
+                            <span>
+                              <ErrorIcon
+                                sx={{ fontSize: "15px", textAlign: "center" }}
+                              />
+                              &nbsp;
+                              {formVal.errors.comment}
+                            </span>
+                          </div>
+                        )}
+                        <button
+                          id="submitbutt"
+                          type="submit"
+                          style={{
+                            background: "none",
+                            border: "none",
+                            position: "absolute",
+                            top: 8,
+                            right: 5,
+                          }}
+                        >
+                          <SendIcon />
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </Box>
         </Box>
-        <Box
-          sx={{
-            border: "1px solid grey",
-            width: "300px",
-            marginTop: "10px",
-            boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-            borderRadius: "8px",
-            padding: "5px",
-          }}
-        >
-          <Typography sx={{ color: "head.main" }} variant="h6">
-            Additional sessions
-          </Typography>
-          {addArr.map((data) => (
-            <div
-              style={{ margin: "2px" }}
-              onClick={() => handleAdditional(data)}
-            >
-              <Typography variant="h5">
-                Day - {data.day}&nbsp;
-                {data.title}
-              </Typography>
-              <p style={{ color: "#7E8E9F" }}>
-                on {data.date} from {data.time}
-              </p>
-            </div>
-          ))}
-          <div>
-            {" "}
-            <SnackBarComp
-              openSnack={openSnack}
-              setOpenSnack={setOpenSnack}
-              dataMsg={dataMsg}
-            />
-            <EditForm
-              arr={arr}
-              open={open}
-              handleClose={handleClose}
-              getAddtionalClass={getAddtionalClass}
-              getClass={getClass}
-            />
-          </div>
-        </Box>
-      </Box>
-    </div>
+        <CommentBox arr={comment} open={open} handleClose={handleClose} />
+      </div>
+    </>
   );
 };
 

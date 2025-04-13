@@ -26,24 +26,20 @@ const Login = () => {
         setLoad(true);
         document.getElementById("loginbutt").disabled = true;
         console.log(data);
-        const res = await backendInstance.post("/users/login", data);
+        const res = await backendInstance.post("/api/v1/login-user", data);
         console.log(res.data);
-        sessionStorage.setItem("user", JSON.stringify(res.data));
+        sessionStorage.setItem("user", JSON.stringify(res.data.data));
         console.log(res);
-        if (res.data.msg === "Invalid Credentials") {
-          setLoad(false);
-          alert("Invalid Credentials");
-          document.getElementById("loginbutt").disabled = false;
-        } else if (res.data.msg === "User doesnt exist") {
-          setLoad(false);
-          alert("User doesnt exist");
-          document.getElementById("loginbutt").disabled = false;
-        } else {
+        if (res.data.message === "Login success") {
           formData.resetForm();
           navigate("/");
         }
       } catch (error) {
         console.log(error);
+        setLoad(false);
+        alert(error.response.data.message);
+        // document.getElementById("registerform").reset();
+        document.getElementById("loginbutt").disabled = false;
       }
     },
     validationSchema: validation,

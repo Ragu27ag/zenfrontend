@@ -3,22 +3,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Main from "./Pages/Main";
 import ZClasses from "./Pages/ZClasses";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import QueriesPage from "./Pages/QueriesPage";
-import AddQueries from "./Pages/AddQueries";
-import LeaveApp from "./Pages/LeaveApp";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import Tasks from "./Pages/Tasks";
-import Webcode from "./Pages/Webcode";
-import Capstone from "./Pages/Capstone";
-import Syllabus from "./Pages/Syllabus";
-import Requirements from "./Pages/Requirements";
-import Portfolio from "./Pages/Portfolio";
-import MockInterView from "./Pages/MockInterView";
-import Dashboard from "./Pages/Dashboard";
+import MarketPlace from "./Pages/MarketPlace";
 import io from "socket.io-client";
+import MyMarketPlace from "./Pages/MyMarketPlace";
 
-export const socket = io.connect(process.env.REACT_APP_URL);
+// export const socket = io.connect(process.env.REACT_APP_URL);
 
 function App() {
   const theme = createTheme({
@@ -41,17 +32,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Main />}>
             <Route index element={<ZClasses />} />
-            <Route path="/queries" element={<QueriesPage />} />
-            <Route path="/queries/add" element={<AddQueries />} />
-            <Route path="/leaveapp" element={<LeaveApp />} />
-            <Route path="/task" element={<Tasks />} />
-            <Route path="/webcode" element={<Webcode />} />
-            <Route path="/capstone" element={<Capstone />} />
-            <Route path="/syllabus" element={<Syllabus />} />
-            <Route path="/requirements" element={<Requirements />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/mockinterview" element={<MockInterView />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/my-marketplace" element={<MyMarketPlace />} />
+            <Route path="/marketplace" element={<MarketPlace />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,337 +7,285 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import backendInstance from "../Axios/axios";
+import { Box, Input, TextField } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import SnackBarComp from "./SnackBarComp";
+import Rating from "@mui/material/Rating";
 
-const EditForm = ({ arr, open, handleClose, getClass, getAdditionalClass }) => {
-  const [openSnack, setOpenSnack] = React.useState(false);
-
-  const [dataMsg, setDataMsg] = React.useState("");
+const EditForm = ({ arr, open, handleClose, setOpenSnack }) => {
+  const User = useMemo(
+    () => JSON.parse(sessionStorage.getItem("user")) || {},
+    []
+  );
+  const [buy, setBuy] = useState(false);
 
   const handleClick = () => {
+    setBuy(false);
     console.log("opened");
-    setDataMsg("Added Successfully");
-    setOpenSnack(true);
     handleClose();
-    getClass();
-    getAdditionalClass();
+    setOpenSnack(true);
   };
 
   const validation = yup.object().shape({
-    module: yup.string().required("Enter module"),
-    day: yup
-      .number()
-      .min(1, "Days should be greater than 1 day")
-      .max(40, "Roadmap sessions should be greater than 40 days")
-      .required("Enter day"),
-    title: yup.string().required("Enter the title"),
-    date: yup.string().required("Enter the date"),
-    time: yup.string().required("Enter the time"),
-    contents: yup.string().required("Enter the contents"),
-    preread: yup.string(),
-    activities: yup.string(),
-    type: yup.string().required("Enter the type"),
+    customer_name: yup.string().required("Enter customer_name"),
+    billing_address: yup.string().required("Enter the billing_address"),
+    quantity: yup.number().required("Enter the quantity"),
   });
 
-  const formData = useFormik({
+  const formVal = useFormik({
     initialValues: {
-      module: "",
-      day: "",
-      title: "",
-      date: "",
-      time: "",
-      contents: "",
-      preread: "",
-      activities: "",
-      type: "",
+      customer_name: "",
+      billing_address: "",
+      quantity: 0,
+      product_name: "",
+      product_image_url: "",
+      product_price: 0,
+      product_id: "",
+      market_id: "",
+      date_of_delivery: "",
+      order_status: "",
+      order_id: "",
     },
     onSubmit: async (data) => {
       try {
         document.getElementById("submitbutt").disabled = true;
-        let allow = true;
         console.log(data);
-        arr.forEach((cla) => {
-          if (cla.day === data.day && data.type === "roadmap") {
-            alert(
-              "Class already exist either delete the existing one or edit the existing one"
-            );
-            allow = false;
-          }
-        });
-
-        if (Number(data.day) > 40) {
-          alert(
-            "Roadmap sessions are full try adding this as additional session"
-          );
-          allow = false;
+        let obj = {
+          ...data,
+          product_name: arr.product_name,
+          product_image_url: arr.product_image_url,
+          product_price: arr.product_price,
+          product_id: arr.product_id,
+          market_id: arr.market_id,
+          date_of_delivery: "",
+          order_status: "Order Placed",
+          user_id: User[0].user_id,
+        };
+        const res = await backendInstance.post("/api/v1/add-order", obj);
+        console.log("res", res);
+        if (res.data.message === "Inserted Successfully") {
+          formVal.resetForm();
+          handleClick();
+        } else {
+          document.getElementById("submitbutt").disabled = false;
         }
-
-        if (data.type === "additional" && allow) {
-          const res = await backendInstance.post("/additionalClass", data);
-          if (res.data.msg === "Inserted Successfully") {
-            handleClick();
-          } else {
-            document.getElementById("submitbutt").disabled = false;
-          }
-
-          console.log(res.data);
-        }
-        if (data.type === "roadmap" && allow) {
-          const res = await backendInstance.post("/classes", data);
-          if (res.data.msg === "Inserted Successfully") {
-            handleClick();
-          } else {
-            document.getElementById("submitbutt").disabled = false;
-          }
-          console.log(res.data);
-        }
+        console.log(res.arr);
         document.getElementById("submitbutt").disabled = false;
       } catch (error) {
+        document.getElementById("submitbutt").disabled = false;
         console.log(error);
       }
-
-      // if (res.data.msg === "Inserted Successfully") {
-      // }
     },
     validationSchema: validation,
   });
 
   return (
-    <div>
-      <div>
-        {" "}
-        <div>
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+      sx={{}}
+    >
+      <DialogTitle id="alert-dialog-title">{arr.product_name}</DialogTitle>
+      <DialogContent sx={{ width: "600px" }}>
+        <DialogContentText id="alert-dialog-description">
+          <Box
+            sx={{
+              // display: "flex",
+              // flexWrap: "wrap",
+              // justifyContent: "space-around",
+              borderRadius: "8px",
+              // border: "1px solid red",
+              margin: "5%",
+              boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+              // maxWidth: "90%",
+            }}
           >
-            <DialogTitle id="alert-dialog-title">{"Add classes"}</DialogTitle>
-            <DialogContent sx={{ width: "400px", textAlign: "center" }}>
-              <DialogContentText id="alert-dialog-description">
-                <div>
-                  {" "}
-                  <form onSubmit={formData.handleSubmit}>
-                    <label htmlFor="module">Subject</label>
+            <div
+              style={{
+                margin: "5px",
+                borderRadius: "8px",
+                boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+
+                height: "380px",
+              }}
+            >
+              <img
+                src={arr.product_image_url}
+                alt=""
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "8px",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+            <div
+              style={{
+                margin: "5px",
+                borderRadius: "8px",
+                padding: "8px",
+              }}
+            >
+              <p
+                style={{
+                  margin: "5px",
+                  color: "black",
+                  fontSize: "25px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {arr?.product_name}
+              </p>
+              <p
+                style={{
+                  margin: "1px 5px 5px 5px",
+                  color: "#555A8F",
+                  fontSize: "18px",
+                }}
+              >
+                {arr?.product_description}
+              </p>
+              <p
+                style={{
+                  margin: "1px 5px 5px 5px",
+                  color: "#555A8F",
+                  fontSize: "18px",
+                }}
+              >
+                Rs : {arr?.product_price}
+              </p>
+            </div>
+            <div
+              style={{
+                margin: "5px",
+                borderRadius: "8px",
+                padding: "8px",
+              }}
+            >
+              <p
+                style={{
+                  margin: "1px 5px 5px 5px",
+                  color: "#555A8F",
+                  fontSize: "15px",
+                }}
+              >
+                Manufacturrer : {arr?.manufacturer_name}
+              </p>
+              <p
+                style={{
+                  margin: "1px 5px 5px 5px",
+                  color: "#555A8F",
+                  fontSize: "15px",
+                }}
+              >
+                Address : {arr?.manufacturer_address || "-"}
+              </p>
+            </div>
+
+            <div
+              style={{
+                margin: "5px",
+                borderRadius: "8px",
+                padding: "8px",
+              }}
+            >
+              <p
+                style={{
+                  margin: "1px 5px 5px 5px",
+                  color: "#555A8F",
+                  fontSize: "15px",
+                }}
+              >
+                Available : {arr?.stocks}
+              </p>
+              <p
+                style={{
+                  margin: "1px 5px 5px 5px",
+                  color: "#555A8F",
+                  fontSize: "15px",
+                }}
+              >
+                <Rating name="read-only" value={arr?.star_rating} readOnly />
+              </p>
+            </div>
+
+            {/* <div
+              style={{
+                margin: "5px",
+                borderRadius: "8px",
+                border: "1px solid grey",
+                padding: "8px",
+              }}
+            >
+              <p
+                style={{
+                  margin: "1px 5px 5px 5px",
+                  color: "#555A8F",
+                  fontSize: "15px",
+                }}
+              >
+                {arr?.comments}
+              </p>
+            </div> */}
+
+            <div
+              style={{
+                margin: "5px",
+                padding: "8px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              {!buy && (
+                <Button
+                  sx={{
+                    backgroundColor: "buttcolor.main",
+                    margin: "5px",
+                    width: "100%",
+                  }}
+                  variant="contained"
+                  id="markbutt"
+                  onClick={() => setBuy(true)}
+                >
+                  BUY
+                </Button>
+              )}
+            </div>
+            {buy && (
+              <div
+                style={{
+                  margin: "5px",
+                  borderRadius: "8px",
+                  height: "380px",
+                }}
+              >
+                <h4>Shipping Details : </h4>
+                <div
+                  style={{
+                    margin: "5px",
+                    borderRadius: "8px",
+                    padding: "10px",
+                  }}
+                >
+                  <form id="orderform" onSubmit={formVal.handleSubmit}>
+                    <label htmlFor="customer_name">Customer Name</label>
                     <br />
                     <input
-                      name="module"
-                      id="module"
-                      onChange={formData.handleChange}
-                      onBlur={formData.handleBlur}
-                      value={formData.module}
-                      //   defaultValue={
-                      //     editData.module === "" && editAddData.module === ""
-                      //       ? ""
-                      //       : editData.module || editAddData.module
-                      //   }
+                      name="customer_name"
+                      id="customer_name"
+                      value={formVal.values.customer_name}
+                      onChange={formVal.handleChange}
+                      onBlur={formVal.handleBlur}
                     />
-                    {formData.touched.module && formData.errors.module && (
-                      <div
-                        style={{
-                          color: "red",
-                          fontSize: "15px",
-                          marginTop: "15px",
-                        }}
-                      >
-                        <span>
-                          <ErrorIcon
-                            sx={{ fontSize: "15px", textAlign: "center" }}
-                          />
-                          &nbsp;
-                          {formData.errors.module}
-                        </span>{" "}
-                      </div>
-                    )}
                     <br />
-                    <label htmlFor="day">Day</label>
-                    <br />
-                    <input
-                      name="day"
-                      id="day"
-                      onChange={formData.handleChange}
-                      onBlur={formData.handleBlur}
-                      value={formData.day}
-                    />
-                    {formData.touched.day && formData.errors.day && (
-                      <div
-                        style={{
-                          color: "red",
-                          fontSize: "15px",
-                          marginTop: "15px",
-                        }}
-                      >
-                        <span>
-                          <ErrorIcon
-                            sx={{ fontSize: "15px", textAlign: "center" }}
-                          />
-                          &nbsp;
-                          {formData.errors.day}
-                        </span>{" "}
-                      </div>
-                    )}
-                    <br />
-                    <label htmlFor="title">Title</label>
-                    <br />
-                    <input
-                      type="title"
-                      name="title"
-                      id="title"
-                      onChange={formData.handleChange}
-                      onBlur={formData.handleBlur}
-                      value={formData.title}
-                    />
-                    {formData.touched.title && formData.errors.title && (
-                      <div
-                        style={{
-                          color: "red",
-                          fontSize: "15px",
-                          marginTop: "15px",
-                        }}
-                      >
-                        <span>
-                          <ErrorIcon
-                            sx={{ fontSize: "15px", textAlign: "center" }}
-                          />
-                          &nbsp;
-                          {formData.errors.title}
-                        </span>{" "}
-                      </div>
-                    )}
-                    <br />
-                    <label htmlFor="date">Date</label>
-                    <br />
-                    <input
-                      type="date"
-                      name="date"
-                      id="date"
-                      onChange={formData.handleChange}
-                      onBlur={formData.handleBlur}
-                      value={formData.date}
-                    />
-                    {formData.touched.date && formData.errors.date && (
-                      <div
-                        style={{
-                          color: "red",
-                          fontSize: "15px",
-                          marginTop: "15px",
-                        }}
-                      >
-                        <span>
-                          <ErrorIcon
-                            sx={{ fontSize: "15px", textAlign: "center" }}
-                          />
-                          &nbsp;
-                          {formData.errors.date}
-                        </span>{" "}
-                      </div>
-                    )}
-                    <br />
-                    <br /> <label htmlFor="time">Time</label>
-                    <br />
-                    <input
-                      type="time"
-                      name="time"
-                      id="time"
-                      onChange={formData.handleChange}
-                      onBlur={formData.handleBlur}
-                      value={formData.time}
-                    />
-                    {formData.touched.time && formData.errors.time && (
-                      <div
-                        style={{
-                          color: "red",
-                          fontSize: "15px",
-                          marginTop: "15px",
-                        }}
-                      >
-                        <span>
-                          <ErrorIcon
-                            sx={{ fontSize: "15px", textAlign: "center" }}
-                          />
-                          &nbsp;
-                          {formData.errors.time}
-                        </span>{" "}
-                      </div>
-                    )}
-                    <br />
-                    <br /> <label htmlFor="contents">Contents</label>
-                    <br />
-                    <textarea
-                      rows={10}
-                      cols={30}
-                      id="contents"
-                      name="contents"
-                      onChange={formData.handleChange}
-                      onBlur={formData.handleBlur}
-                      value={formData.contents}
-                    ></textarea>
-                    {formData.touched.contents && formData.errors.contents && (
-                      <div
-                        style={{
-                          color: "red",
-                          fontSize: "15px",
-                          marginTop: "15px",
-                        }}
-                      >
-                        <span>
-                          <ErrorIcon
-                            sx={{ fontSize: "15px", textAlign: "center" }}
-                          />
-                          &nbsp;
-                          {formData.errors.contents}
-                        </span>{" "}
-                      </div>
-                    )}
-                    <br />
-                    <br /> <label htmlFor="preread">Pre Read</label>
-                    <br />
-                    <textarea
-                      rows={10}
-                      cols={30}
-                      id="preread"
-                      name="preread"
-                      onChange={formData.handleChange}
-                      onBlur={formData.handleBlur}
-                      value={formData.preread}
-                    ></textarea>
-                    {formData.touched.preread && formData.errors.preread && (
-                      <div
-                        style={{
-                          color: "red",
-                          fontSize: "15px",
-                          marginTop: "15px",
-                        }}
-                      >
-                        <span>
-                          <ErrorIcon
-                            sx={{ fontSize: "15px", textAlign: "center" }}
-                          />
-                          &nbsp;
-                          {formData.errors.preread}
-                        </span>{" "}
-                      </div>
-                    )}
-                    <br />
-                    <br /> <label htmlFor="activities">Activites</label>
-                    <br />
-                    <textarea
-                      rows={10}
-                      cols={30}
-                      id="activities"
-                      name="activities"
-                      onChange={formData.handleChange}
-                      onBlur={formData.handleBlur}
-                      value={formData.activities}
-                    ></textarea>
-                    {formData.touched.activities &&
-                      formData.errors.activities && (
+                    {formVal.touched.customer_name &&
+                      formVal.errors.customer_name && (
                         <div
                           style={{
                             color: "red",
@@ -350,29 +298,55 @@ const EditForm = ({ arr, open, handleClose, getClass, getAdditionalClass }) => {
                               sx={{ fontSize: "15px", textAlign: "center" }}
                             />
                             &nbsp;
-                            {formData.errors.activities}
+                            {formVal.errors.customer_name}
                           </span>{" "}
                         </div>
                       )}
                     <br />
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        Type
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={formData.type}
-                        label="Type"
-                        name="type"
-                        onChange={formData.handleChange}
-                      >
-                        <MenuItem value={"roadmap"}>Roadmap</MenuItem>
-                        <MenuItem value={"additional"}>Additional</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <label htmlFor="billing_address">Billing Address</label>
                     <br />
-                    {formData.touched.type && formData.errors.type && (
+                    <textarea
+                      name="billing_address"
+                      type="billing_address"
+                      id="billing_address"
+                      value={formVal.values.billing_address}
+                      onChange={formVal.handleChange}
+                      onBlur={formVal.handleBlur}
+                    />
+                    <br />
+                    {formVal.touched.billing_address &&
+                      formVal.errors.billing_address && (
+                        <div
+                          style={{
+                            color: "red",
+                            fontSize: "15px",
+                            marginTop: "15px",
+                          }}
+                        >
+                          <span>
+                            <ErrorIcon
+                              sx={{ fontSize: "15px", textAlign: "center" }}
+                            />
+                            &nbsp;
+                            {formVal.errors.billing_address}
+                          </span>{" "}
+                        </div>
+                      )}
+                    <br />
+                    <label htmlFor="quantity">Quantity</label>
+                    <br />
+                    <input
+                      type="number"
+                      name="quantity"
+                      id="quantity"
+                      min={1}
+                      max={arr.stocks}
+                      value={formVal.values.quantity}
+                      onChange={formVal.handleChange}
+                      onBlur={formVal.handleBlur}
+                    />
+                    <br />
+                    {formVal.touched.quantity && formVal.errors.quantity && (
                       <div
                         style={{
                           color: "red",
@@ -385,34 +359,30 @@ const EditForm = ({ arr, open, handleClose, getClass, getAdditionalClass }) => {
                             sx={{ fontSize: "15px", textAlign: "center" }}
                           />
                           &nbsp;
-                          {formData.errors.type}
+                          {formVal.errors.quantity}
                         </span>{" "}
                       </div>
                     )}
                     <br />
-                    <br />
                     <Button
-                      variant="contained"
+                      autoFocus
                       sx={{ backgroundColor: "buttcolor.main" }}
+                      variant="contained"
                       type="submit"
+                      disableRipple="true"
                       id="submitbutt"
+                      size="large"
                     >
-                      submit{" "}
+                      Place Order
                     </Button>
-                    &nbsp;&nbsp;&nbsp;
                   </form>
                 </div>
-              </DialogContentText>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-      <SnackBarComp
-        openSnack={openSnack}
-        setOpenSnack={setOpenSnack}
-        dataMsg={dataMsg}
-      />
-    </div>
+              </div>
+            )}
+          </Box>
+        </DialogContentText>
+      </DialogContent>
+    </Dialog>
   );
 };
 

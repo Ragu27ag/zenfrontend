@@ -31,11 +31,13 @@ import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 
 import logo from "./zenimage-PhotoRoom.png-PhotoRoom.png";
+import { Avatar } from "@mui/material";
+import { deepOrange } from "@mui/material/colors";
 
 const drawerWidth = 240;
 
 const health = () => {
-  backendInstance.get("/health");
+  backendInstance.get("/api/v1/health");
 };
 
 const openedMixin = (theme) => ({
@@ -116,51 +118,16 @@ const Main = () => {
     setOpen(false);
   };
 
-  const stuArr = [
-    "Class",
-    "Dashboard",
-    "Tasks",
-    "Webcode",
-    "Capstone",
-    "Queries",
-    "Requirements",
-    "PortFolio-submission",
-    "Leave-applications",
-    "Mock-interview",
-
-    "Syllabus",
-  ];
-  const admArr = [
-    "Class",
-    "Tasks",
-    "WebcodeCapstone",
-    "Queries",
-    "Requirements",
-    "PortFolio-submission",
-    "Leave-applications",
-    "Mock-interview",
-
-    "Syllabus",
-  ];
+  const stuArr = ["Feed", "MarketPlace", "My Market"];
 
   const handleRedirect = (text) => {
     console.log(text);
-    if (text === "Queries") {
-      navigate("/queries");
-    } else if (text === "Leave-applications") {
-      navigate("/leaveapp");
-    } else if (text === "Class") {
+    if (text === "My Market") {
+      navigate("/my-marketplace");
+    } else if (text === "Feed") {
       navigate("/");
-    } else if (text === "Tasks") {
-      navigate("/task");
-    } else if (text === "Webcode" || text === "WebcodeCapstone") {
-      navigate("/webcode");
-    } else if (text === "Capstone") {
-      navigate("/capstone");
-    } else if (text === "Syllabus") {
-      navigate("/syllabus");
-    } else if (text === "Requirements") {
-      navigate("/requirements");
+    } else if (text === "MarketPlace") {
+      navigate("/marketplace");
     } else if (text === "PortFolio-submission") {
       navigate("/portfolio");
     } else if (text === "Mock-interview") {
@@ -211,17 +178,16 @@ const Main = () => {
             <div style={{ position: "relative" }}>
               <span>
                 {User.name}&nbsp;
-                <IconButton
-                  size="small"
+                <Avatar
                   sx={{
-                    backgroundColor: "primary.main",
-                    border: "1px solid",
-                    height: "28px",
+                    bgcolor: deepOrange[500],
+                    display: "inline-flex",
+                    margin: "6px",
                   }}
                   onClick={() => setMenu(!menus)}
                 >
-                  {User?.name?.slice(0, 1)}
-                </IconButton>
+                  {User[0]?.user_name?.slice(0, 1)}
+                </Avatar>
               </span>
               {menus && (
                 <>
@@ -231,8 +197,8 @@ const Main = () => {
                       borderLeft: "10px solid transparent",
                       borderRight: "10px solid transparent",
                       borderBottom: "10px solid #e8e8e8 ",
-                      top: "30px",
-                      right: "2px",
+                      top: "40px",
+                      right: "8px",
                     }}
                   ></div>
                   <div
@@ -240,30 +206,18 @@ const Main = () => {
                       position: "absolute",
                       backgroundColor: "#e8e8e8",
                       right: "-10px",
-                      top: "39px",
+                      top: "49px",
                       width: "100px",
                       height: "60px",
                       textAlign: "center",
                     }}
                   >
-                    {/* <button
-                      style={{
-                        width: "inherit",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      profile
-                    </button> */}
-                    {/* <br /> */}
                     <button
                       style={{
                         width: "100%",
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-
                         height: "100%",
                       }}
                       onClick={handleLogout}
@@ -297,103 +251,53 @@ const Main = () => {
         </DrawerHeader>
         <Divider />
         <List>
-          {User.role === "student"
-            ? stuArr.map((text, index) => (
-                <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                  <ListItemButton
-                    onClick={() => handleRedirect(text)}
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {text === "Class" ? (
-                        <ClassIcon fontSize="small" />
-                      ) : text === "Dashboard" ? (
-                        <DashboardIcon fontSize="small" />
-                      ) : text === "Tasks" ? (
-                        <TaskIcon fontSize="small" />
-                      ) : text === "Webcode" ? (
-                        <WebIcon fontSize="small" />
-                      ) : text === "Capstone" ? (
-                        <AccountTreeIcon fontSize="small" />
-                      ) : text === "Queries" ? (
-                        <QueryStatsIcon fontSize="small" />
-                      ) : text === "Requirements" ? (
-                        <InterpreterModeIcon fontSize="small" />
-                      ) : text === "Portfolio-submission" ? (
-                        <ArticleIcon fontSize="small" />
-                      ) : text === "Leave-applications" ? (
-                        <MarkunreadMailboxIcon fontSize="small" />
-                      ) : text === "Mock-interview" ? (
-                        <VideoCallIcon fontSize="small" />
-                      ) : text === "Leaderboard" ? (
-                        <LeaderboardIcon fontSize="small" />
-                      ) : (
-                        <SummarizeIcon fontSize="small" />
-                      )}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={text}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))
-            : admArr.map((text, index) => (
-                <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                  <ListItemButton
-                    onClick={() => handleRedirect(text)}
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {text === "Class" ? (
-                        <ClassIcon fontSize="small" />
-                      ) : text === "Tasks" ? (
-                        <TaskIcon fontSize="small" />
-                      ) : text === "WebcodeCapstone" ? (
-                        <WebIcon fontSize="small" />
-                      ) : text === "Queries" ? (
-                        <QueryStatsIcon fontSize="small" />
-                      ) : text === "Requirements" ? (
-                        <InterpreterModeIcon fontSize="small" />
-                      ) : text === "Portfolio-submission" ? (
-                        <ArticleIcon fontSize="small" />
-                      ) : text === "Leave-applications" ? (
-                        <MarkunreadMailboxIcon fontSize="small" />
-                      ) : text === "Mock-interview" ? (
-                        <VideoCallIcon fontSize="small" />
-                      ) : text === "Leaderboard" ? (
-                        <LeaderboardIcon fontSize="small" />
-                      ) : (
-                        <SummarizeIcon fontSize="small" />
-                      )}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={text}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
+          {stuArr.map((text, index) => (
+            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                onClick={() => handleRedirect(text)}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  {text === "Class" ? (
+                    <ClassIcon fontSize="small" />
+                  ) : text === "Dashboard" ? (
+                    <DashboardIcon fontSize="small" />
+                  ) : text === "Tasks" ? (
+                    <TaskIcon fontSize="small" />
+                  ) : text === "Webcode" ? (
+                    <WebIcon fontSize="small" />
+                  ) : text === "Capstone" ? (
+                    <AccountTreeIcon fontSize="small" />
+                  ) : text === "Queries" ? (
+                    <QueryStatsIcon fontSize="small" />
+                  ) : text === "MarketPlace" ? (
+                    <InterpreterModeIcon fontSize="small" />
+                  ) : text === "Portfolio-submission" ? (
+                    <ArticleIcon fontSize="small" />
+                  ) : text === "Leave-applications" ? (
+                    <MarkunreadMailboxIcon fontSize="small" />
+                  ) : text === "Mock-interview" ? (
+                    <VideoCallIcon fontSize="small" />
+                  ) : text === "Leaderboard" ? (
+                    <LeaderboardIcon fontSize="small" />
+                  ) : (
+                    <SummarizeIcon fontSize="small" />
+                  )}
+                </ListItemIcon>
+                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
         <Divider />
       </Drawer>

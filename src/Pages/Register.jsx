@@ -14,17 +14,21 @@ const Register = () => {
 
   const navigate = useNavigate();
   const validation = yup.object().shape({
-    name: yup.string().required("Enter the username"),
+    user_name: yup.string().required("Enter the username"),
     email: yup.string().email().required("Enter email"),
     password: yup.string().required("Enter the password"),
-    confirmpassword: yup.string().required("Enter the password"),
+    confirmpassword: yup.string().required("Enter the mobile number"),
+    mobile_number: yup
+      .string()
+      .required("Enter the password")
+      .matches(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
   });
   const formData = useFormik({
     initialValues: {
-      name: "",
+      user_name: "",
       email: "",
       password: "",
-      confirmpassword: "",
+      mobile_number: "",
     },
     onSubmit: async (data) => {
       try {
@@ -39,15 +43,10 @@ const Register = () => {
           delete data.confirmpassword;
           const obj = {
             ...data,
-            role: "student",
           };
-          const res = await backendInstance.post("/users/register", obj);
-          if (res.data.msg === "Email already exists") {
-            setLoad(false);
-            alert("Email already exists");
-            document.getElementById("registerform").reset();
-            document.getElementById("registerbutt").disabled = false;
-          } else if (res.data.msg === "Inserted Successfully") {
+          const res = await backendInstance.post("/api/v1/addusers", obj);
+          console.log("res", res);
+          if (res.data.message === "Inserted Successfully") {
             document.getElementById("registerform").reset();
             navigate("/login");
           }
@@ -55,6 +54,12 @@ const Register = () => {
         }
       } catch (error) {
         console.log(error);
+        if (error.response.data.message === "Email already exists") {
+          setLoad(false);
+          alert("Email already exists");
+          // document.getElementById("registerform").reset();
+          document.getElementById("registerbutt").disabled = false;
+        }
       }
     },
     validationSchema: validation,
@@ -82,19 +87,22 @@ const Register = () => {
         }}
       >
         <form id="registerform" onSubmit={formData.handleSubmit}>
-          <label style={{ margin: "5px", color: "#555A8F" }} htmlFor="name">
+          <label
+            style={{ margin: "5px", color: "#555A8F" }}
+            htmlFor="USer_name"
+          >
             User Name
           </label>
           <br />
           <input
-            name="name"
-            id="name"
+            name="user_name"
+            id="user_name"
             onChange={formData.handleChange}
             onBlur={formData.handleBlur}
             value={formData.email}
             style={{ margin: "5px", color: "#555A8F" }}
           />
-          {formData.touched.name && formData.errors.name && (
+          {formData.touched.user_name && formData.errors.user_name && (
             <div
               style={{
                 color: "red",
@@ -105,7 +113,7 @@ const Register = () => {
               <span>
                 <ErrorIcon sx={{ fontSize: "15px", textAlign: "center" }} />
                 &nbsp;
-                {formData.errors.name}
+                {formData.errors.user_name}
               </span>{" "}
             </div>
           )}
@@ -135,6 +143,38 @@ const Register = () => {
                 <ErrorIcon sx={{ fontSize: "15px", textAlign: "center" }} />
                 &nbsp;
                 {formData.errors.email}
+              </span>{" "}
+            </div>
+          )}
+          <br />
+          <label
+            style={{ margin: "5px", color: "#555A8F" }}
+            htmlFor="mobile_number"
+          >
+            Mobile Number
+          </label>
+          <br />
+          <input
+            type="tel"
+            name="mobile_number"
+            id="mobile_number"
+            onChange={formData.handleChange}
+            onBlur={formData.handleBlur}
+            value={formData.mobile_number}
+            style={{ margin: "5px", color: "#555A8F" }}
+          />
+          {formData.touched.mobile_number && formData.errors.mobile_number && (
+            <div
+              style={{
+                color: "red",
+                fontSize: "15px",
+                marginTop: "15px",
+              }}
+            >
+              <span>
+                <ErrorIcon sx={{ fontSize: "15px", textAlign: "center" }} />
+                &nbsp;
+                {formData.errors.mobile_number}
               </span>{" "}
             </div>
           )}

@@ -27,11 +27,12 @@ backendInstance.interceptors.request.use(
 );
 
 backendInstance.interceptors.response.use((response, error) => {
-  if (error) {
-    return Promise.reject.error;
-  } else {
-    return response;
-  }
+  // if (error) {
+  //   return Promise.reject.error;
+  // } else {
+  //   return response;
+  // }
+  return response;
 });
 
 export default backendInstance;
