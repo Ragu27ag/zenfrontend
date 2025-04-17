@@ -6,11 +6,11 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import backendInstance from "../Axios/axios";
 import SnackBarComp from "./SnackBarComp";
 import { Box, Input, TextField } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 import CustomNumberInput from "./CustomIncDecButton";
+import { backendInstance } from "../Axios/axios";
 
 const CommentBox = ({ arr, open, handleClose }) => {
   const [openSnack, setOpenSnack] = React.useState(false);

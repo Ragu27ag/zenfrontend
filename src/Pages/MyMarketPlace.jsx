@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import { useNavigate } from "react-router-dom";
-import backendInstance from "../Axios/axios";
+import { backendInstance } from "../Axios/axios";
 import SnackBarComp from "../Components/SnackBarComp";
 import CreateMarketForm from "./CreateMarketForm";
 import CreatePostForm from "./CreatePostForm";

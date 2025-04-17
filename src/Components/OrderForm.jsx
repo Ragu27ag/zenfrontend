@@ -6,7 +6,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import backendInstance from "../Axios/axios";
+import { backendInstance } from "../Axios/axios";
 import { Box, Input, TextField } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 import Rating from "@mui/material/Rating";

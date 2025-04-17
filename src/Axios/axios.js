@@ -5,6 +5,11 @@ const backendInstance = axios.create({
   timeout: 300000,
 });
 
+const imageUploadInstance = axios.create({
+  baseURL: "https://api.cloudinary.com/v1_1",
+  timeout: 300000,
+});
+
 backendInstance.interceptors.request.use(
   function (req) {
     const User = JSON.parse(sessionStorage.getItem("user")) || {};
@@ -35,4 +40,4 @@ backendInstance.interceptors.response.use((response, error) => {
   return response;
 });
 
-export default backendInstance;
+export { backendInstance, imageUploadInstance };

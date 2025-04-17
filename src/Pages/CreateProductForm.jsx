@@ -7,7 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import ErrorIcon from "@mui/icons-material/Error";
-import backendInstance from "../Axios/axios";
+import { backendInstance } from "../Axios/axios";
 import SnackBarComp from "../Components/SnackBarComp";
 
 const CreateProductForm = ({

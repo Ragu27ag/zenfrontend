@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deepOrange, deepPurple } from "@mui/material/colors";
 
-import backendInstance from "../Axios/axios.js";
+import { backendInstance } from "../Axios/axios.js";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ModeCommentIcon from "@mui/icons-material/ModeComment";
 import CommentBox from "../Components/CommentBox.jsx";

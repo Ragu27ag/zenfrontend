@@ -16,7 +16,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Outlet, useNavigate } from "react-router-dom";
-import backendInstance from "../Axios/axios";
+import { backendInstance } from "../Axios/axios";
 import FeedIcon from "@mui/icons-material/Feed";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import StorefrontIcon from "@mui/icons-material/Storefront";

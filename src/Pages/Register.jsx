@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import React, { useState } from "react";
 import * as yup from "yup";
 import ErrorIcon from "@mui/icons-material/Error";
-import backendInstance from "../Axios/axios";
+import { backendInstance, imageUploadInstance } from "../Axios/axios";
 import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import banner from "../pics/WhatsApp Image 2025-04-13 at 7.24.04 PM.jpeg";
@@ -11,6 +11,8 @@ import banner from "../pics/WhatsApp Image 2025-04-13 at 7.24.04 PM.jpeg";
 const Register = () => {
   const [load, setLoad] = useState(false);
   const [age, setAge] = React.useState("");
+  const [custType, setCustType] = useState("");
+  const [file, setFile] = useState(null);
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -34,21 +36,59 @@ const Register = () => {
       email: "",
       password: "",
       mobile_number: "",
+      customer_type: "",
     },
     onSubmit: async (data) => {
       try {
         setLoad(true);
         document.getElementById("registerbutt").disabled = true;
         console.log(data);
+        let obj = {};
         if (data.confirmpassword !== data.password) {
           alert("Password doesnt match");
           setLoad(false);
           document.getElementById("registerbutt").disabled = false;
         } else {
-          delete data.confirmpassword;
-          const obj = {
-            ...data,
-          };
+          if (data.customer_type == "Seller" && file == null) {
+            alert(
+              "If you are a seller upload aadhaar proof to confirm your gender"
+            );
+            document.getElementById("registerbutt").disabled = false;
+          } else if (data.customer_type == "Seller" && file != null) {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", "ml_default");
+            formData.append("cloud_name", "dhh1svmyo");
+            const img_res = await imageUploadInstance.post(
+              "/dhh1svmyo/image/upload",
+              formData
+            );
+            console.log(img_res.data);
+            const url = img_res.data.secure_url;
+            const gender_res = await backendInstance.post(
+              "/api/v1/validate-proof",
+              { image_url: url }
+            );
+            console.log("gender_res", gender_res);
+            if (gender_res.data.message === "Validated Successfully") {
+              if (gender_res.data.data?.isFemale) {
+                delete data.confirmpassword;
+                obj = {
+                  ...data,
+                  customer_type: custType,
+                  proof_of_verification: url,
+                  gender: gender_res.data.data?.isFemale && "Female",
+                };
+              } else {
+                setLoad(false);
+                alert("Only Female sellers are allowed");
+              }
+            }
+          } else if (data.customer_type == "Buyer") {
+            obj = {
+              ...data,
+            };
+          }
           const res = await backendInstance.post("/api/v1/addusers", obj);
           console.log("res", res);
           if (res.data.message === "Inserted Successfully") {
@@ -59,12 +99,10 @@ const Register = () => {
         }
       } catch (error) {
         console.log(error);
-        if (error.response.data.message === "Email already exists") {
-          setLoad(false);
-          alert("Email already exists");
-          // document.getElementById("registerform").reset();
-          document.getElementById("registerbutt").disabled = false;
-        }
+        setLoad(false);
+        alert(error?.response?.data?.message);
+        // document.getElementById("registerform").reset();
+        document.getElementById("registerbutt").disabled = false;
       }
     },
     validationSchema: validation,
@@ -300,7 +338,10 @@ const Register = () => {
               <select
                 name="customer_type"
                 id="customer_type"
-                onChange={formData.handleChange}
+                onChange={(e) => {
+                  formData.handleChange(e);
+                  setCustType(e.target.value);
+                }}
                 onBlur={formData.handleBlur}
                 style={{
                   // padding: "8px",
@@ -336,6 +377,22 @@ const Register = () => {
                   </div>
                 )}
             </div>
+            {custType == "Seller" && (
+              <div>
+                <Button variant="contained" component="label">
+                  Upload File
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={(e) => {
+                      const selectedFile = e.target.files[0];
+                      setFile(selectedFile);
+                    }}
+                  />
+                </Button>
+              </div>
+            )}
             <div>
               <Button
                 variant="contained"

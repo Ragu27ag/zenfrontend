@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import backendInstance from "../Axios/axios";
+import { backendInstance } from "../Axios/axios";
 import SnackBarComp from "../Components/SnackBarComp";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";

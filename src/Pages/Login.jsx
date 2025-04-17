@@ -6,7 +6,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 import { Link, useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import banner from "../pics/WhatsApp Image 2025-04-13 at 7.24.04 PM.jpeg";
-import backendInstance from "../Axios/axios";
+import { backendInstance } from "../Axios/axios";
 import logo from "../pics/latest_logo.jpeg";
 
 const Login = () => {
