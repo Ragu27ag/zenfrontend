@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Main from "./Pages/Main";
-import ZClasses from "./Pages/ZClasses";
+import Feeds from "./Pages/Feeds";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
@@ -25,19 +25,19 @@ function App() {
   });
 
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Main />}>
-            <Route index element={<ZClasses />} />
-            <Route path="/my-marketplace" element={<MyMarketPlace />} />
-            <Route path="/marketplace" element={<MarketPlace />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    // <ThemeProvider theme={theme}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Main />}>
+          <Route index element={<Feeds />} />
+          <Route path="/my-marketplace" element={<MyMarketPlace />} />
+          <Route path="/marketplace" element={<MarketPlace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+    // </ThemeProvider>
   );
 }
 

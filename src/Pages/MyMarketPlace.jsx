@@ -15,6 +15,12 @@ import SnackBarComp from "../Components/SnackBarComp";
 import CreateMarketForm from "./CreateMarketForm";
 import CreatePostForm from "./CreatePostForm";
 import CreateProductForm from "./CreateProductForm";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import EditIcon from "@mui/icons-material/Edit";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 const MyMarketPlace = () => {
   const [open, setOpen] = React.useState(false);
@@ -69,13 +75,13 @@ const MyMarketPlace = () => {
   // }, [setOrders]);
 
   useEffect(() => {
-    if (Object.keys(User).length === 0) {
-      navigate("/login");
-    } else {
-      marketplace();
-      // getOrders();
-    }
-  }, [User, navigate, marketplace]);
+    // if (Object.keys(User).length === 0) {
+    //   navigate("/login");
+    // } else {
+    marketplace();
+    // getOrders();
+    // }
+  }, [marketplace]);
 
   const handleClose = useCallback(() => {
     setOpen(false);
@@ -94,6 +100,10 @@ const MyMarketPlace = () => {
 
   const [openSnack, setOpenSnack] = React.useState(false);
 
+  const [proDisabled, setProDisabled] = useState([]);
+
+  const [delData, setDelData] = useState({});
+
   const [dataMsg, setDataMsg] = React.useState("");
 
   const handleClick = (msg) => {
@@ -101,6 +111,23 @@ const MyMarketPlace = () => {
     setDataMsg(msg);
     setOpenSnack(true);
   };
+
+  const handleUpdate = async (e) => {
+    try {
+      e.preventDefault();
+      const data = await backendInstance.post(`/api/v1/update-order`, delData);
+      if (data.data.message == "Updated Successfully") {
+        handleClick("Updated Successfully");
+        marketplace();
+        setProDisabled([]);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  console.log("del", delData);
+  console.log("prodisabled", proDisabled);
 
   return (
     <div>
@@ -187,16 +214,18 @@ const MyMarketPlace = () => {
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                   <TableHead>
                     <TableRow>
-                      <TableCell>From</TableCell>
-                      <TableCell align="right">To</TableCell>
-                      <TableCell align="right">Approved</TableCell>
-                      <TableCell align="right">Reason</TableCell>
+                      <TableCell>Product Name</TableCell>
+                      <TableCell>Price</TableCell>
+                      <TableCell>Quantity</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Date of delivery</TableCell>
+                      <TableCell>Update</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{}}>
-                    {arr.map((lev) => (
+                    {orders.map((lev) => (
                       <TableRow
-                        key={lev.date}
+                        key={lev.order_id}
                         sx={{
                           "&:last-child td, &:last-child th": { border: 0 },
                         }}
@@ -206,34 +235,125 @@ const MyMarketPlace = () => {
                           component="th"
                           scope="row"
                         >
-                          {lev.date}
+                          {lev.product_name}
                         </TableCell>
-                        <TableCell sx={{ color: "mild.main" }} align="right">
-                          {lev?.to?.slice(0, 10)}
+                        <TableCell sx={{ color: "mild.main" }}>
+                          {lev?.product_price}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "mild.main",
+                          }}
+                        >
+                          <span style={{}}>{lev.quantity}</span>
+                        </TableCell>
+                        <TableCell sx={{ color: "mild.main" }} width={100}>
+                          <select
+                            disabled={
+                              proDisabled?.includes(`${lev?.order_id}`)
+                                ? false
+                                : true
+                            }
+                            name="post_type"
+                            id="post_type"
+                            defaultValue={lev.order_status}
+                            onChange={(e) =>
+                              setDelData({
+                                ...delData,
+                                order_status: e.target.value,
+                                product_id: lev?.product_id,
+                                order_id: lev?.order_id,
+                              })
+                            }
+                            style={{
+                              // padding: "8px",
+                              borderRadius: "4px",
+                              border: "1px solid #ccc",
+                              fontFamily: "Poppins, sans-serif",
+                              // width: "100%",
+                            }}
+                          >
+                            <option value="" disabled>
+                              Select Order status
+                            </option>
+                            <option value="Order Placed">Order Placed</option>
+                            <option value="Order Confirmed">
+                              Order Confirmed
+                            </option>
+                            <option value="Dispatched">Dispatched</option>
+                            <option value="Shipped">Shipped</option>
+                          </select>
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            color: "mild.main",
+                          }}
+                        >
+                          {proDisabled?.includes(`${lev?.order_id}`) ? (
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                              {/* <DemoContainer components={["DatePicker"]}> */}
+                              <DatePicker
+                                disabled={
+                                  proDisabled?.includes(`${lev?.order_id}`)
+                                    ? false
+                                    : true
+                                }
+                                label="Delivery"
+                                onChange={(newValue) =>
+                                  setDelData({
+                                    ...delData,
+                                    date_of_delivery: newValue
+                                      ? newValue.format("YYYY-MM-DD")
+                                      : "",
+                                    product_id: lev?.product_id,
+                                    order_id: lev?.order_id,
+                                  })
+                                }
+                                // defaultValue={lev.date_of_delivery}
+                                value={dayjs(delData.date_of_delivery)}
+                              />
+                              {/* </DemoContainer> */}
+                            </LocalizationProvider>
+                          ) : (
+                            <span style={{}}>{lev.date_of_delivery}</span>
+                          )}
                         </TableCell>
                         <TableCell
                           sx={{
                             color: "white",
                           }}
-                          align="right"
                         >
+                          {proDisabled?.includes(`${lev?.order_id}`) && (
+                            <span style={{ backgroundColor: "#FF9A28" }}>
+                              <Button
+                                autoFocus
+                                sx={{ backgroundColor: "buttcolor.main" }}
+                                variant="contained"
+                                type="submit"
+                                disableRipple="true"
+                                id="submitbutt"
+                                size="small"
+                                onClick={(e) => handleUpdate(e)}
+                              >
+                                Update
+                              </Button>
+                            </span>
+                          )}
+                          &nbsp;
                           <span style={{ backgroundColor: "#FF9A28" }}>
-                            {lev.approval || "Pending"}
+                            <Button
+                              autoFocus
+                              sx={{ backgroundColor: "buttcolor.main" }}
+                              variant="contained"
+                              type="submit"
+                              disableRipple="true"
+                              id="submitbutt"
+                              size="small"
+                              onClick={() => setProDisabled([lev?.order_id])}
+                            >
+                              <EditIcon />
+                            </Button>
                           </span>
-                        </TableCell>
-                        <TableCell
-                          sx={{ color: "mild.main" }}
-                          width={100}
-                          align="center"
-                        >
-                          <p
-                            style={{
-                              overflowWrap: "break-word",
-                              width: "100px",
-                            }}
-                          >
-                            {lev.reason}
-                          </p>
                         </TableCell>
                       </TableRow>
                     ))}

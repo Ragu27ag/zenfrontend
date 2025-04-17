@@ -17,20 +17,20 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Outlet, useNavigate } from "react-router-dom";
 import backendInstance from "../Axios/axios";
-import ClassIcon from "@mui/icons-material/Class";
+import FeedIcon from "@mui/icons-material/Feed";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import TaskIcon from "@mui/icons-material/Task";
 import WebIcon from "@mui/icons-material/Web";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import ArticleIcon from "@mui/icons-material/Article";
 import MarkunreadMailboxIcon from "@mui/icons-material/MarkunreadMailbox";
-import InterpreterModeIcon from "@mui/icons-material/InterpreterMode";
 import SummarizeIcon from "@mui/icons-material/Summarize";
-import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import VideoCallIcon from "@mui/icons-material/VideoCall";
 
-import logo from "./zenimage-PhotoRoom.png-PhotoRoom.png";
+import logo from "../pics/latest_logo.jpeg";
 import { Avatar } from "@mui/material";
 import { deepOrange } from "@mui/material/colors";
 
@@ -143,12 +143,12 @@ const Main = () => {
   );
 
   useEffect(() => {
-    if (Object.keys(User).length === 0) {
-      navigate("/login");
-    } else {
-      health();
-    }
-  }, [User, navigate]);
+    // if (Object.keys(User).length === 0) {
+    //   navigate("/login");
+    // } else {
+    health();
+    // }
+  }, [User]);
 
   const [menus, setMenu] = useState(false);
 
@@ -172,9 +172,9 @@ const Main = () => {
           >
             <img src={logo} alt="imagess" height={50} width={50} />
 
-            <Typography variant="h6" noWrap component="div">
-              Zenclass
-            </Typography>
+            {/* <Typography variant="h6" noWrap component="div">
+              Herfemora
+            </Typography> */}
             <div style={{ position: "relative" }}>
               <span>
                 {User.name}&nbsp;
@@ -268,8 +268,8 @@ const Main = () => {
                     justifyContent: "center",
                   }}
                 >
-                  {text === "Class" ? (
-                    <ClassIcon fontSize="small" />
+                  {text === "Feed" ? (
+                    <FeedIcon fontSize="small" />
                   ) : text === "Dashboard" ? (
                     <DashboardIcon fontSize="small" />
                   ) : text === "Tasks" ? (
@@ -281,15 +281,15 @@ const Main = () => {
                   ) : text === "Queries" ? (
                     <QueryStatsIcon fontSize="small" />
                   ) : text === "MarketPlace" ? (
-                    <InterpreterModeIcon fontSize="small" />
+                    <StorefrontIcon fontSize="small" />
                   ) : text === "Portfolio-submission" ? (
                     <ArticleIcon fontSize="small" />
                   ) : text === "Leave-applications" ? (
                     <MarkunreadMailboxIcon fontSize="small" />
                   ) : text === "Mock-interview" ? (
                     <VideoCallIcon fontSize="small" />
-                  ) : text === "Leaderboard" ? (
-                    <LeaderboardIcon fontSize="small" />
+                  ) : text === "My Market" ? (
+                    <AddBusinessIcon fontSize="small" />
                   ) : (
                     <SummarizeIcon fontSize="small" />
                   )}

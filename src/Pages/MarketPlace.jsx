@@ -2,12 +2,15 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import backendInstance from "../Axios/axios";
-import EditForm from "../Components/EditForm";
 import SnackBarComp from "../Components/SnackBarComp";
+import { TextField, InputAdornment, IconButton } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import OrderForm from "../Components/OrderForm";
 
 const MarketPlace = () => {
   const [openSnack, setOpenSnack] = React.useState(false);
   const [dataMsg, setDataMsg] = React.useState("");
+  const [query, setQuery] = useState("");
   const User = useMemo(
     () => JSON.parse(sessionStorage.getItem("user")) || {},
     []
@@ -34,12 +37,12 @@ const MarketPlace = () => {
   console.log("products arr", arr);
 
   useEffect(() => {
-    if (Object.keys(User).length === 0) {
-      navigate("/login");
-    } else {
-      getData();
-    }
-  }, [User, navigate, getData]);
+    // if (Object.keys(User).length === 0) {
+    //   navigate("/login");
+    // } else {
+    getData();
+    // }
+  }, [getData]);
 
   const handleClose = () => {
     setDataMsg("Order Placed");
@@ -50,6 +53,24 @@ const MarketPlace = () => {
     <>
       {" "}
       <h1>Products</h1>
+      <TextField
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search..."
+        variant="outlined"
+        size="small"
+        fullWidth
+        sx={{ maxWidth: 400 }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton>
+                <SearchIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
       <Box
         sx={{
           display: "flex",
@@ -67,112 +88,118 @@ const MarketPlace = () => {
             No products to show.
           </p>
         ) : (
-          arr.map((data) => (
-            <div
-              style={{
-                margin: "15px",
-                borderRadius: "8px",
-                // height: "300px",
-                width: "300px",
-                boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-              }}
-            >
+          arr
+            .filter((val) =>
+              val?.product_name
+                ?.toLowerCase()
+                .includes(query?.toLocaleLowerCase())
+            )
+            .map((data) => (
               <div
                 style={{
-                  margin: "5px",
+                  margin: "15px",
                   borderRadius: "8px",
-                  height: "180px",
+                  // height: "300px",
+                  width: "300px",
+                  boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
                 }}
               >
-                <img
-                  src={data.product_image_url}
-                  alt=""
+                <div
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+                    margin: "5px",
                     borderRadius: "8px",
+                    height: "180px",
                   }}
-                />
-              </div>
-              <div
-                style={{
-                  margin: "5px",
-                  borderRadius: "8px",
-                  padding: "8px",
-                  height: "100px",
-                }}
-              >
-                <p
+                >
+                  <img
+                    src={data.product_image_url}
+                    alt=""
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </div>
+                <div
                   style={{
                     margin: "5px",
-                    fontSize: "15px",
-                    fontWeight: "bolder",
-                    color: "black",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    height: "100px",
                   }}
                 >
-                  {data?.product_name}
-                </p>
-                <p
-                  style={{
-                    margin: "1px 5px 5px 5px",
-                    color: "#555A8F",
-                    fontSize: "10px",
-                    fontWeight: "bolder",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {data?.product_description}
-                </p>
-                <p
-                  style={{
-                    margin: "1px 5px 5px 5px",
-                    color: "#555A8F",
-                    fontSize: "15px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  Rs : {data?.product_price}
-                </p>
-              </div>
+                  <p
+                    style={{
+                      margin: "5px",
+                      fontSize: "15px",
+                      fontWeight: "bolder",
+                      color: "black",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {data?.product_name}
+                  </p>
+                  <p
+                    style={{
+                      margin: "1px 5px 5px 5px",
+                      color: "#555A8F",
+                      fontSize: "10px",
+                      fontWeight: "bolder",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {data?.product_description}
+                  </p>
+                  <p
+                    style={{
+                      margin: "1px 5px 5px 5px",
+                      color: "#555A8F",
+                      fontSize: "15px",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Rs : {data?.product_price}
+                  </p>
+                </div>
 
-              <div
-                style={{
-                  margin: "5px",
-                  padding: "8px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
-              >
-                <Button
-                  sx={{
-                    backgroundColor: "buttcolor.main",
+                <div
+                  style={{
                     margin: "5px",
-                    width: "100%",
-                  }}
-                  variant="contained"
-                  id="markbutt"
-                  onClick={() => {
-                    setOpen(true);
-                    setCurrData(data);
+                    padding: "8px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flexWrap: "wrap",
                   }}
                 >
-                  VIEW
-                </Button>
+                  <Button
+                    sx={{
+                      backgroundColor: "buttcolor.main",
+                      margin: "5px",
+                      width: "100%",
+                    }}
+                    variant="contained"
+                    id="markbutt"
+                    onClick={() => {
+                      setOpen(true);
+                      setCurrData(data);
+                    }}
+                  >
+                    VIEW
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))
+            ))
         )}
-        <EditForm
+        <OrderForm
           arr={currData}
           open={open}
           handleClose={handleClose}
