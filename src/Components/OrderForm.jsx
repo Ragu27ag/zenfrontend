@@ -11,6 +11,7 @@ import { Box, Input, TextField } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 import Rating from "@mui/material/Rating";
 import { useNavigate } from "react-router-dom";
+import GooglePayButton from "@google-pay/button-react";
 
 const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
   const User = useMemo(
@@ -18,6 +19,8 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
     []
   );
   const [buy, setBuy] = useState(false);
+  const [gpay, setGpay] = useState(false);
+  const [orderDetails, setOrderDtails] = useState({});
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -62,16 +65,7 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
           order_status: "Order Placed",
           user_id: User[0].user_id,
         };
-        const res = await backendInstance.post("/api/v1/add-order", obj);
-        console.log("res", res);
-        if (res.data.message === "Inserted Successfully") {
-          formVal.resetForm();
-          handleClick();
-        } else {
-          document.getElementById("submitbutt").disabled = false;
-        }
-        console.log(res.arr);
-        document.getElementById("submitbutt").disabled = false;
+        setOrderDtails(obj);
       } catch (error) {
         document.getElementById("submitbutt").disabled = false;
         console.log(error);
@@ -380,11 +374,70 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
                       disableRipple="true"
                       id="submitbutt"
                       size="large"
+                      onClick={() => {
+                        setGpay(true);
+                      }}
                     >
                       Place Order
                     </Button>
                   </form>
                 </div>
+              </div>
+            )}
+            {gpay && (
+              <div className="p-4">
+                <GooglePayButton
+                  environment="TEST"
+                  paymentRequest={{
+                    apiVersion: 2,
+                    apiVersionMinor: 0,
+                    allowedPaymentMethods: [
+                      {
+                        type: "CARD",
+                        parameters: {
+                          allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+                          allowedCardNetworks: ["MASTERCARD", "VISA"],
+                        },
+                        tokenizationSpecification: {
+                          type: "PAYMENT_GATEWAY",
+                          parameters: {
+                            gateway: "example",
+                            gatewayMerchantId: "exampleGatewayMerchantId",
+                          },
+                        },
+                      },
+                    ],
+                    merchantInfo: {
+                      merchantId: "12345678901234567890",
+                      merchantName: "Demo Merchant",
+                    },
+                    transactionInfo: {
+                      totalPriceStatus: "FINAL",
+                      totalPriceLabel: "Total",
+                      totalPrice: "10.00",
+                      currencyCode: "USD",
+                      countryCode: "US",
+                    },
+                  }}
+                  onLoadPaymentData={async (paymentRequest) => {
+                    console.log("Payment data loaded:", paymentRequest);
+                    console.log("order details", orderDetails);
+                    // handle successful payment here
+                    const res = await backendInstance.post(
+                      "/api/v1/add-order",
+                      orderDetails
+                    );
+                    console.log("res", res);
+                    if (res.data.message === "Inserted Successfully") {
+                      formVal.resetForm();
+                      handleClick();
+                    } else {
+                      document.getElementById("submitbutt").disabled = false;
+                    }
+                    console.log(res.arr);
+                    document.getElementById("submitbutt").disabled = false;
+                  }}
+                />
               </div>
             )}
           </Box>

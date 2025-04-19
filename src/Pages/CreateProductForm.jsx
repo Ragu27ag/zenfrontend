@@ -9,6 +9,8 @@ import * as yup from "yup";
 import ErrorIcon from "@mui/icons-material/Error";
 import { backendInstance } from "../Axios/axios";
 import SnackBarComp from "../Components/SnackBarComp";
+import { TextField } from "@mui/material";
+import Textarea from "@mui/joy/Textarea";
 
 const CreateProductForm = ({
   open,
@@ -84,17 +86,19 @@ const CreateProductForm = ({
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">{"Create Product"}</DialogTitle>
-          <DialogContent sx={{ width: "600px", textAlign: "center" }}>
+          <DialogContent sx={{ width: "600px" }}>
             <DialogContentText id="alert-dialog-description">
               <form id="leaveform" onSubmit={formVal.handleSubmit}>
-                <label htmlFor="product_name">Product Name</label>
-                <br />
-                <input
+                <TextField
                   name="product_name"
                   id="product_name"
+                  variant="outlined"
+                  label="Product Name"
+                  size="small"
                   value={formVal.values.product_name}
                   onChange={formVal.handleChange}
                   onBlur={formVal.handleBlur}
+                  style={{ margin: "5px", color: "#555A8F" }}
                 />
                 <br />
                 {formVal.touched.product_name &&
@@ -102,13 +106,13 @@ const CreateProductForm = ({
                     <div
                       style={{
                         color: "red",
-                        fontSize: "15px",
-                        marginTop: "15px",
+                        fontSize: "10px",
+                        marginTop: "5px",
                       }}
                     >
                       <span>
                         <ErrorIcon
-                          sx={{ fontSize: "15px", textAlign: "center" }}
+                          sx={{ fontSize: "10px", textAlign: "center" }}
                         />
                         &nbsp;
                         {formVal.errors.product_name}
@@ -116,17 +120,19 @@ const CreateProductForm = ({
                     </div>
                   )}
                 <br />
-                <label htmlFor="product_description">
-                  Describe your Product
-                </label>
-                <br />
-                <textarea
+                <Textarea
                   name="product_description"
                   type="product_description"
                   id="product_description"
+                  variant="outlined"
+                  placeholder="Describe your Product"
+                  size="small"
+                  minRows={2}
+                  maxRows={4}
                   value={formVal.values.product_description}
                   onChange={formVal.handleChange}
                   onBlur={formVal.handleBlur}
+                  sx={{ width: "50%" }}
                 />
                 <br />
                 {formVal.touched.product_description &&
@@ -134,13 +140,13 @@ const CreateProductForm = ({
                     <div
                       style={{
                         color: "red",
-                        fontSize: "15px",
-                        marginTop: "15px",
+                        fontSize: "10px",
+                        marginTop: "5px",
                       }}
                     >
                       <span>
                         <ErrorIcon
-                          sx={{ fontSize: "15px", textAlign: "center" }}
+                          sx={{ fontSize: "10px", textAlign: "center" }}
                         />
                         &nbsp;
                         {formVal.errors.product_description}
@@ -163,13 +169,13 @@ const CreateProductForm = ({
                     <div
                       style={{
                         color: "red",
-                        fontSize: "15px",
-                        marginTop: "15px",
+                        fontSize: "10px",
+                        marginTop: "5px",
                       }}
                     >
                       <span>
                         <ErrorIcon
-                          sx={{ fontSize: "15px", textAlign: "center" }}
+                          sx={{ fontSize: "10px", textAlign: "center" }}
                         />
                         &nbsp;
                         {formVal.errors.product_image_url}
@@ -193,13 +199,13 @@ const CreateProductForm = ({
                     <div
                       style={{
                         color: "red",
-                        fontSize: "15px",
-                        marginTop: "15px",
+                        fontSize: "10px",
+                        marginTop: "5px",
                       }}
                     >
                       <span>
                         <ErrorIcon
-                          sx={{ fontSize: "15px", textAlign: "center" }}
+                          sx={{ fontSize: "10px", textAlign: "center" }}
                         />
                         &nbsp;
                         {formVal.errors.product_price}
@@ -222,13 +228,13 @@ const CreateProductForm = ({
                   <div
                     style={{
                       color: "red",
-                      fontSize: "15px",
-                      marginTop: "15px",
+                      fontSize: "10px",
+                      marginTop: "5px",
                     }}
                   >
                     <span>
                       <ErrorIcon
-                        sx={{ fontSize: "15px", textAlign: "center" }}
+                        sx={{ fontSize: "10px", textAlign: "center" }}
                       />
                       &nbsp;
                       {formVal.errors.stocks}

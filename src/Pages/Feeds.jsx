@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deepOrange, deepPurple } from "@mui/material/colors";
-
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { backendInstance } from "../Axios/axios.js";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ModeCommentIcon from "@mui/icons-material/ModeComment";
@@ -15,6 +15,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 import Avatar from "@mui/material/Avatar";
 import logo from "../pics/WhatsApp Image 2025-04-13 at 7.24.04 PM.jpeg";
 import bags from "../pics/bags.jpg";
+import CreatePostForm from "./CreatePostForm.jsx";
 
 const Feeds = () => {
   const User = useMemo(
@@ -45,6 +46,8 @@ const Feeds = () => {
   // const [editAddData, setEditAddData] = useState({});
 
   const [openSnack, setOpenSnack] = React.useState(false);
+
+  const [openPost, setOpenPost] = React.useState(false);
 
   const validation = yup.object().shape({
     comment: yup.string().required("Enter comment"),
@@ -176,9 +179,30 @@ const Feeds = () => {
     }
   };
 
+  const handlePostClose = useCallback(() => {
+    setOpenPost(false);
+  }, [setOpenPost]);
+
   return (
     <>
+      <CreatePostForm
+        open={openPost}
+        handleClose={handlePostClose}
+        market_id={arr[0]?.market_id}
+        user_id={User[0].user_id}
+      />
       <h1>Feeds</h1>
+      <Button
+        sx={{
+          backgroundColor: "buttcolor.main",
+          marginBottom: "15px",
+        }}
+        variant="contained"
+        startIcon={<AddCircleOutlineIcon />}
+        onClick={() => setOpenPost(true)}
+      >
+        Post Something
+      </Button>
       <div
         className="main-div"
         style={{
@@ -188,10 +212,6 @@ const Feeds = () => {
           marginTop: "20px",
           flexWrap: "wrap",
           width: "100vw",
-          backgroundImage: `url(${bags})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
         }}
       >
         <Box

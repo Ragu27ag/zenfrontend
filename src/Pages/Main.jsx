@@ -108,6 +108,8 @@ const Drawer = styled(MuiDrawer, {
 const Main = () => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [finalArr, setFinalArr] = useState([]);
+
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
@@ -118,8 +120,6 @@ const Main = () => {
     setOpen(false);
   };
 
-  const stuArr = ["Feed", "MarketPlace", "My Market"];
-
   const handleRedirect = (text) => {
     console.log(text);
     if (text === "My Market") {
@@ -128,12 +128,6 @@ const Main = () => {
       navigate("/");
     } else if (text === "MarketPlace") {
       navigate("/marketplace");
-    } else if (text === "PortFolio-submission") {
-      navigate("/portfolio");
-    } else if (text === "Mock-interview") {
-      navigate("/mockinterview");
-    } else if (text === "Dashboard") {
-      navigate("/dashboard");
     }
   };
 
@@ -148,6 +142,10 @@ const Main = () => {
     // } else {
     health();
     // }
+    const buyerArr = ["Feed", "MarketPlace"];
+    const sellerArr = ["Feed", "My Market"];
+    if (User[0].customer_type == "Seller") setFinalArr(sellerArr);
+    else if (User[0].customer_type == "Buyer") setFinalArr(buyerArr);
   }, [User]);
 
   const [menus, setMenu] = useState(false);
@@ -251,8 +249,12 @@ const Main = () => {
         </DrawerHeader>
         <Divider />
         <List>
-          {stuArr.map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+          {finalArr.map((text, index) => (
+            <ListItem
+              key={text}
+              disablePadding
+              sx={{ display: "block", marginBottom: "50px" }}
+            >
               <ListItemButton
                 onClick={() => handleRedirect(text)}
                 sx={{
@@ -270,24 +272,8 @@ const Main = () => {
                 >
                   {text === "Feed" ? (
                     <FeedIcon fontSize="small" />
-                  ) : text === "Dashboard" ? (
-                    <DashboardIcon fontSize="small" />
-                  ) : text === "Tasks" ? (
-                    <TaskIcon fontSize="small" />
-                  ) : text === "Webcode" ? (
-                    <WebIcon fontSize="small" />
-                  ) : text === "Capstone" ? (
-                    <AccountTreeIcon fontSize="small" />
-                  ) : text === "Queries" ? (
-                    <QueryStatsIcon fontSize="small" />
                   ) : text === "MarketPlace" ? (
                     <StorefrontIcon fontSize="small" />
-                  ) : text === "Portfolio-submission" ? (
-                    <ArticleIcon fontSize="small" />
-                  ) : text === "Leave-applications" ? (
-                    <MarkunreadMailboxIcon fontSize="small" />
-                  ) : text === "Mock-interview" ? (
-                    <VideoCallIcon fontSize="small" />
                   ) : text === "My Market" ? (
                     <AddBusinessIcon fontSize="small" />
                   ) : (
