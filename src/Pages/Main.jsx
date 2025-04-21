@@ -18,17 +18,10 @@ import ListItemText from "@mui/material/ListItemText";
 import { Outlet, useNavigate } from "react-router-dom";
 import { backendInstance } from "../Axios/axios";
 import FeedIcon from "@mui/icons-material/Feed";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
-import TaskIcon from "@mui/icons-material/Task";
-import WebIcon from "@mui/icons-material/Web";
-import AccountTreeIcon from "@mui/icons-material/AccountTree";
-import QueryStatsIcon from "@mui/icons-material/QueryStats";
-import ArticleIcon from "@mui/icons-material/Article";
-import MarkunreadMailboxIcon from "@mui/icons-material/MarkunreadMailbox";
 import SummarizeIcon from "@mui/icons-material/Summarize";
-import VideoCallIcon from "@mui/icons-material/VideoCall";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
 import logo from "../pics/latest_logo.jpeg";
 import { Avatar } from "@mui/material";
@@ -128,6 +121,8 @@ const Main = () => {
       navigate("/");
     } else if (text === "MarketPlace") {
       navigate("/marketplace");
+    } else if (text === "My Orders") {
+      navigate("/my-orders");
     }
   };
 
@@ -142,7 +137,7 @@ const Main = () => {
     // } else {
     health();
     // }
-    const buyerArr = ["Feed", "MarketPlace"];
+    const buyerArr = ["Feed", "MarketPlace", "My Orders"];
     const sellerArr = ["Feed", "My Market"];
     if (User[0].customer_type == "Seller") setFinalArr(sellerArr);
     else if (User[0].customer_type == "Buyer") setFinalArr(buyerArr);
@@ -276,6 +271,8 @@ const Main = () => {
                     <StorefrontIcon fontSize="small" />
                   ) : text === "My Market" ? (
                     <AddBusinessIcon fontSize="small" />
+                  ) : text === "My Orders" ? (
+                    <LocalShippingIcon fontSize="small" />
                   ) : (
                     <SummarizeIcon fontSize="small" />
                   )}

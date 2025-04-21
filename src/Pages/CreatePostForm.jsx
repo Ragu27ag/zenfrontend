@@ -50,12 +50,20 @@ const CreatePostForm = ({ open, handleClose, market_id, user_id }) => {
             document.getElementById("submitbutt").disabled = true;
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("upload_preset", "ml_default");
-            formData.append("cloud_name", "dhh1svmyo");
-            const img_res = await imageUploadInstance.post(
-              "/dhh1svmyo/image/upload",
-              formData
-            );
+            formData.append("upload_preset", process.env.REACT_APP_PRESET);
+            formData.append("cloud_name", process.env.REACT_APP_CLOUD_NAME);
+            let img_res;
+            if (data.post_type == "Image") {
+              img_res = await imageUploadInstance.post(
+                `/${process.env.REACT_APP_CLOUD_NAME}/image/upload`,
+                formData
+              );
+            } else {
+              img_res = await imageUploadInstance.post(
+                `/${process.env.REACT_APP_CLOUD_NAME}/video/upload`,
+                formData
+              );
+            }
             console.log(img_res.data);
             const url = img_res.data.secure_url;
             console.log(data);
@@ -153,7 +161,7 @@ const CreatePostForm = ({ open, handleClose, market_id, user_id }) => {
               )}
               <br />
               <Button variant="contained" component="label">
-                Upload Image
+                Upload Image/Video
                 <input
                   type="file"
                   hidden

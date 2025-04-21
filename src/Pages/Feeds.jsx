@@ -1,6 +1,12 @@
-import { Box, Button, IconButton, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { deepOrange, deepPurple } from "@mui/material/colors";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -35,6 +41,8 @@ const Feeds = () => {
 
   const [comment, setComments] = useState([]);
 
+  const [newComment, setNewComment] = useState({});
+
   // const [type, setType] = React.useState("");
 
   const [dataMsg, setDataMsg] = React.useState("");
@@ -49,9 +57,13 @@ const Feeds = () => {
 
   const [openPost, setOpenPost] = React.useState(false);
 
+  const commentInput = useRef(null);
+
   const validation = yup.object().shape({
     comment: yup.string().required("Enter comment"),
   });
+
+  const theme = useTheme();
 
   const formVal = useFormik({
     initialValues: {
@@ -163,16 +175,17 @@ const Feeds = () => {
     }
   };
 
-  const handleComment = async (data) => {
+  const handleComment = async (data, isFromCmt) => {
     try {
       console.log("handle comment");
       let obj = {
         post_id: data.post_id,
       };
       const res = await backendInstance.post("/api/v1/get-post-comments", obj);
+      console.log("res", res);
       if (res.data.message === "Comments") {
         setComments(res.data.data);
-        setOpen(true);
+        if (isFromCmt) setOpen(true);
       }
     } catch (error) {
       console.log(error);
@@ -183,6 +196,27 @@ const Feeds = () => {
     setOpenPost(false);
   }, [setOpenPost]);
 
+  const handleNewComment = async () => {
+    if (Object.entries(newComment).length !== 0) {
+      try {
+        document.getElementById("commentsbutt").disabled = false;
+        const res = await backendInstance.post(
+          "/api/v1/post-comments",
+          newComment
+        );
+        if (res.data.message === "Comments") {
+          await getPost();
+          await handleComment({ post_id: newComment?.post_id }, false);
+          setNewComment({});
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      console.log("newComment", newComment);
+    }
+  };
+
   return (
     <>
       <CreatePostForm
@@ -191,7 +225,7 @@ const Feeds = () => {
         market_id={arr[0]?.market_id}
         user_id={User[0].user_id}
       />
-      <h1>Feeds</h1>
+      <h1 style={{ backgroundColor: theme.palette.post.main }}>Feeds</h1>
       <Button
         sx={{
           backgroundColor: "buttcolor.main",
@@ -257,6 +291,7 @@ const Feeds = () => {
                     height: "600px",
                     margin: "15px",
                     borderRadius: "8px",
+                    backgroundColor: theme.palette.post.main,
                     boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
                   }}
                 >
@@ -274,6 +309,7 @@ const Feeds = () => {
                       margin: "5px",
                       color: "#555A8F",
                       display: "inline-flex",
+                      fontFamily: "Poppins, sans-serif",
                       fontSize: "15px",
                       fontWeight: "bolder",
                       color: "black",
@@ -292,7 +328,7 @@ const Feeds = () => {
                   </p>
                   <p
                     style={{
-                      margin: "5px",
+                      margin: "15px 0px 10px 5px",
                       fontSize: "15px",
                       fontWeight: "bolder",
                       color: "black",
@@ -320,15 +356,17 @@ const Feeds = () => {
                         }}
                       />
                     ) : (
-                      <iframe
-                        width="100%"
-                        height="100%"
-                        src="https://www.youtube.com/embed/BAOdoV7jQVo?autoplay=1&mute=1"
-                        title="YouTube video"
-                        style={{ border: "none" }}
-                        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
+                      <video
+                        controls
+                        style={{
+                          width: "100%",
+                          height: "auto",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        <source src={data.post_url} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
                     )}
                     <div
                       style={{
@@ -375,7 +413,7 @@ const Feeds = () => {
                         <button
                           style={{ background: "none", border: "none" }}
                           onClick={(e) => {
-                            handleComment(data);
+                            handleComment(data, true);
                           }}
                         >
                           <ModeCommentIcon />
@@ -393,56 +431,53 @@ const Feeds = () => {
                         position: "relative",
                       }}
                     >
-                      <form id="orderform" onSubmit={formVal.handleSubmit}>
-                        <textarea
-                          name="comment"
-                          type="comment"
-                          id="comment"
-                          value={formVal.values.comment}
-                          onChange={formVal.handleChange}
-                          onBlur={formVal.handleBlur}
-                          placeholder="comment"
-                          style={{
-                            width: "100%",
-                            border: "none",
-                            borderBottom: "1px solid grey",
-                            outline: "none",
-                          }}
-                        />
-                        <br />
-                        {formVal.touched.comment && formVal.errors.comment && (
-                          <div
-                            style={{
-                              color: "red",
-                              fontSize: "15px",
-                              position: "absolute",
-                              top: "8px",
-                              right: "60px",
-                            }}
-                          >
-                            <span>
-                              <ErrorIcon
-                                sx={{ fontSize: "15px", textAlign: "center" }}
-                              />
-                              &nbsp;
-                              {formVal.errors.comment}
-                            </span>
-                          </div>
-                        )}
-                        <button
-                          id="submitbutt"
-                          type="submit"
-                          style={{
-                            background: "none",
-                            border: "none",
-                            position: "absolute",
-                            top: 8,
-                            right: 5,
-                          }}
-                        >
-                          <SendIcon />
-                        </button>
-                      </form>
+                      <textarea
+                        name="comment"
+                        type="comment"
+                        id="comment"
+                        value={
+                          newComment.post_id == data.post_id
+                            ? newComment.comment
+                            : ""
+                        }
+                        onFocus={() =>
+                          setNewComment({
+                            ...newComment,
+                            post_id: data.post_id,
+                          })
+                        }
+                        ref={commentInput}
+                        onChange={(e) => {
+                          setNewComment({
+                            ...newComment,
+                            post_id: data.post_id,
+                            user_id: User[0].user_id,
+                            comment: e.target.value,
+                          });
+                        }}
+                        placeholder="comment"
+                        style={{
+                          width: "100%",
+                          border: "none",
+                          borderBottom: "1px solid grey",
+                          outline: "none",
+                        }}
+                      />
+                      <br />
+                      <button
+                        id="commentsbutt"
+                        type="submit"
+                        style={{
+                          background: "none",
+                          border: "none",
+                          position: "absolute",
+                          top: 8,
+                          right: 5,
+                        }}
+                        onClick={handleNewComment}
+                      >
+                        <SendIcon />
+                      </button>
                     </div>
                   </div>
                 </div>

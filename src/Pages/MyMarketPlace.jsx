@@ -131,7 +131,6 @@ const MyMarketPlace = () => {
           handleClose={handleClose}
           user_id={User[0].user_id}
         />
-
         <CreateProductForm
           open={openProduct}
           handleClose={handleProductClose}
@@ -140,6 +139,16 @@ const MyMarketPlace = () => {
           market_name={arr[0]?.market_name}
         />
         <>
+          <div
+            style={{
+              backgroundImage: `url(${arr[0]?.market_image_url})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              width: "100%",
+              height: "50vh",
+            }}
+          ></div>
           <div>
             <h1
               style={{
@@ -258,6 +267,7 @@ const MyMarketPlace = () => {
                           </option>
                           <option value="Dispatched">Dispatched</option>
                           <option value="Shipped">Shipped</option>
+                          <option value="Delivered">Delivered</option>
                         </select>
                       </TableCell>
                       <TableCell

@@ -6,7 +6,7 @@ const backendInstance = axios.create({
 });
 
 const imageUploadInstance = axios.create({
-  baseURL: "https://api.cloudinary.com/v1_1",
+  baseURL: process.env.REACT_APP_MEDIA_URL,
   timeout: 300000,
 });
 

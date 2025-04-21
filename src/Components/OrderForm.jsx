@@ -82,7 +82,9 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
       aria-describedby="alert-dialog-description"
       sx={{}}
     >
-      <DialogTitle id="alert-dialog-title">{arr.product_name}</DialogTitle>
+      <DialogTitle key={arr.product_id} id="alert-dialog-title">
+        {arr.product_name}
+      </DialogTitle>
       <DialogContent sx={{ width: "600px" }}>
         <DialogContentText id="alert-dialog-description">
           <Box
@@ -94,6 +96,7 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
               // border: "1px solid red",
               margin: "5%",
               boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+              backgroundColor: "#FAFAFA",
               // maxWidth: "90%",
             }}
           >
@@ -342,7 +345,7 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
                       name="quantity"
                       id="quantity"
                       min={1}
-                      max={arr.stocks}
+                      max={+arr.stocks}
                       value={formVal.values.quantity}
                       onChange={formVal.handleChange}
                       onBlur={formVal.handleBlur}
@@ -375,7 +378,8 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
                       id="submitbutt"
                       size="large"
                       onClick={() => {
-                        setGpay(true);
+                        console.log("forma", formVal.values);
+                        if (formVal.values.customer_name != "") setGpay(true);
                       }}
                     >
                       Place Order
@@ -385,7 +389,7 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
               </div>
             )}
             {gpay && (
-              <div className="p-4">
+              <div className="p-4" style={{ margin: "10px" }}>
                 <GooglePayButton
                   environment="TEST"
                   paymentRequest={{
@@ -414,9 +418,11 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
                     transactionInfo: {
                       totalPriceStatus: "FINAL",
                       totalPriceLabel: "Total",
-                      totalPrice: "10.00",
-                      currencyCode: "USD",
-                      countryCode: "US",
+                      totalPrice: `${
+                        arr.product_price * formVal.values.quantity
+                      }`,
+                      currencyCode: "INR",
+                      countryCode: "IN",
                     },
                   }}
                   onLoadPaymentData={async (paymentRequest) => {
@@ -431,6 +437,7 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
                     if (res.data.message === "Inserted Successfully") {
                       formVal.resetForm();
                       handleClick();
+                      setGpay(false);
                     } else {
                       document.getElementById("submitbutt").disabled = false;
                     }

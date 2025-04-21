@@ -57,10 +57,10 @@ const Register = () => {
           } else if (data.customer_type == "Seller" && file != null) {
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("upload_preset", "ml_default");
-            formData.append("cloud_name", "dhh1svmyo");
+            formData.append("upload_preset", process.env.REACT_APP_PRESET);
+            formData.append("cloud_name", process.env.REACT_APP_CLOUD_NAME);
             const img_res = await imageUploadInstance.post(
-              "/dhh1svmyo/image/upload",
+              `/${process.env.REACT_APP_CLOUD_NAME}/image/upload`,
               formData
             );
             console.log(img_res.data);
@@ -92,6 +92,17 @@ const Register = () => {
           const res = await backendInstance.post("/api/v1/addusers", obj);
           console.log("res", res);
           if (res.data.message === "Inserted Successfully") {
+            if (data.customer_type == "Seller") {
+              const market_obj = {
+                market_name: data.user_name,
+                user_id: res.data.data[0].user_id,
+                market_image_url: "",
+              };
+              const market_res = await backendInstance.post(
+                "/api/v1/add-market",
+                market_obj
+              );
+            }
             document.getElementById("registerform").reset();
             navigate("/login");
           }
