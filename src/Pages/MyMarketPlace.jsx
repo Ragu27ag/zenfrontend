@@ -45,7 +45,7 @@ const MyMarketPlace = () => {
   const marketplace = useCallback(async () => {
     try {
       const data = await backendInstance.post(`/api/v1/get-market`, {
-        user_id: User[0].user_id,
+        user_id: User[0]?.user_id,
       });
       setArr(data.data.data);
       const firstMarketId = data.data.data[0]?.market_id;
@@ -58,7 +58,7 @@ const MyMarketPlace = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [User[0].user_id, setArr, setOrders]);
+  }, [User[0]?.user_id, setArr, setOrders]);
 
   console.log("market arr", arr);
 
@@ -129,13 +129,13 @@ const MyMarketPlace = () => {
         <CreateMarketForm
           open={open}
           handleClose={handleClose}
-          user_id={User[0].user_id}
+          user_id={User[0]?.user_id}
         />
         <CreateProductForm
           open={openProduct}
           handleClose={handleProductClose}
           market_id={arr[0]?.market_id}
-          user_id={User[0].user_id}
+          user_id={User[0]?.user_id}
           market_name={arr[0]?.market_name}
         />
         <>

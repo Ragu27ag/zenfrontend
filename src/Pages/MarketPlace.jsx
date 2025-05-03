@@ -38,7 +38,7 @@ const MarketPlace = () => {
   const getOrdersData = useCallback(async () => {
     try {
       const res = await backendInstance.post("/api/v1/get-order", {
-        user_id: User[0].user_id,
+        user_id: User[0]?.user_id,
       });
       // const resData = await backendInstance.get(`/applicationlist/${User.email}`);
       setArr(res.data.data);

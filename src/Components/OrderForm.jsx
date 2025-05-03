@@ -63,7 +63,7 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
           market_id: arr.market_id,
           date_of_delivery: "",
           order_status: "Order Placed",
-          user_id: User[0].user_id,
+          user_id: User[0]?.user_id,
         };
         setOrderDtails(obj);
       } catch (error) {
@@ -251,7 +251,7 @@ const OrderForm = ({ arr, open, handleClose, setOpenSnack }) => {
                   variant="contained"
                   id="markbutt"
                   onClick={() => {
-                    if (Object.keys(User).length === 0) {
+                    if (Object.keys(User)?.length === 0) {
                       navigate("/login");
                     } else {
                       setBuy(true);

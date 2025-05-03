@@ -25,7 +25,7 @@ const MyOrders = () => {
   const getOrdersData = useCallback(async () => {
     try {
       const res = await backendInstance.post("/api/v1/get-order", {
-        user_id: User[0].user_id,
+        user_id: User[0]?.user_id,
       });
       // const resData = await backendInstance.get(`/applicationlist/${User.email}`);
       setArr(res.data.data);
@@ -54,7 +54,7 @@ const MyOrders = () => {
           const res = await backendInstance.post("/api/v1/add-product-rating", {
             star_rating: `${rating}`,
             product_id: product_id,
-            user_id: User[0].user_id,
+            user_id: User[0]?.user_id,
           });
           console.log("res", res);
           if (res.data.message === "Inserted Successfully") {

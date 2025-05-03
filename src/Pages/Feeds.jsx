@@ -19,7 +19,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import ErrorIcon from "@mui/icons-material/Error";
 import Avatar from "@mui/material/Avatar";
-import logo from "../pics/WhatsApp Image 2025-04-13 at 7.24.04 PM.jpeg";
+import logo from "../pics/Shopping Options.gif";
 import bags from "../pics/bags.jpg";
 import CreatePostForm from "./CreatePostForm.jsx";
 
@@ -122,7 +122,7 @@ const Feeds = () => {
   const getlikes = useCallback(async () => {
     try {
       const res = await backendInstance.post("/api/v1/get-post-likes", {
-        user_id: User[0].user_id,
+        user_id: User[0]?.user_id,
       });
       console.log("likes list", res.data.data);
       setLikes(res.data.data.map((data) => data?.post_id));
@@ -156,13 +156,13 @@ const Feeds = () => {
 
   const handleLike = async (data) => {
     try {
-      if (Object.keys(User).length === 0) {
+      if (Object.keys(User)?.length === 0) {
         navigate("/login");
       } else {
         console.log("handle like");
         let obj = {
           post_id: data.post_id,
-          user_id: User[0].user_id,
+          user_id: User[0]?.user_id,
         };
         const res = await backendInstance.post("/api/v1/add-post-likes", obj);
         if (res.data.message === "Liked Successfully") {
@@ -223,36 +223,54 @@ const Feeds = () => {
         open={openPost}
         handleClose={handlePostClose}
         market_id={arr[0]?.market_id}
-        user_id={User[0].user_id}
+        user_id={User[0]?.user_id}
       />
-      <h1 style={{ backgroundColor: theme.palette.post.main }}>Feeds</h1>
-      <Button
-        sx={{
-          backgroundColor: "buttcolor.main",
-          marginBottom: "15px",
+      <h6
+        style={{
+          fontFamily: "Poppins, sans-serif",
+          fontWeight: 600,
+          fontSize: "54px",
+          letterSpacing: "1px",
+          color: "#1e3a8a",
+          margin: "10px",
         }}
-        variant="contained"
-        startIcon={<AddCircleOutlineIcon />}
-        onClick={() => setOpenPost(true)}
       >
-        Post Something
-      </Button>
+        Herfemora
+      </h6>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Button
+          sx={{
+            backgroundColor: "buttcolor.main",
+            marginBottom: "15px",
+          }}
+          variant="contained"
+          startIcon={<AddCircleOutlineIcon />}
+          onClick={() => setOpenPost(true)}
+        >
+          Post Something
+        </Button>
+      </div>
       <div
         className="main-div"
         style={{
           display: "flex",
           flexFlowflow: "wrap",
-          gap: "24px",
+          gap: "5px",
           marginTop: "20px",
           flexWrap: "wrap",
-          width: "100vw",
+          // width: "100vw",
         }}
       >
         <Box
           sx={{
             flex: "1 1",
             overflow: "auto",
-            minWidth: "380px",
             alignSelf: "stretch",
             flexGrow: "1",
             width: "60%",
@@ -276,8 +294,8 @@ const Feeds = () => {
               // alignItems: "center",
               borderRadius: "8px",
               // boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-              margin: "5% 10% 10% 10%",
-              maxWidth: "800px",
+              margin: "0% 10% 10% 5%",
+              // maxWidth: "500px",
             }}
           >
             {arr.length === 0 ? (
@@ -390,7 +408,11 @@ const Feeds = () => {
                         <button
                           style={{ background: "none", border: "none" }}
                           onClick={(e) => {
-                            handleLike(data);
+                            if (Object.keys(User).length === 0) {
+                              navigate("/login");
+                            } else {
+                              handleLike(data);
+                            }
                           }}
                         >
                           <ThumbUpIcon
@@ -451,7 +473,7 @@ const Feeds = () => {
                           setNewComment({
                             ...newComment,
                             post_id: data.post_id,
-                            user_id: User[0].user_id,
+                            user_id: User[0]?.user_id,
                             comment: e.target.value,
                           });
                         }}
@@ -489,12 +511,10 @@ const Feeds = () => {
         <Box sx={{ width: "40%" }}>
           <img
             src={logo}
-            height={900}
+            height={500}
             width={500}
             style={{
-              marginTop: "5px",
-              borderRadius: "8px",
-              boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+              marginTop: "2px",
             }}
             alt="logo"
           />

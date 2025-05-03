@@ -170,7 +170,7 @@ const Register = () => {
               fontWeight: 600,
               fontSize: "64px",
               letterSpacing: "1px",
-              color: "#2C3E50",
+              color: "#b91c1c",
               margin: "0px",
             }}
           >

@@ -139,8 +139,8 @@ const Main = () => {
     // }
     const buyerArr = ["Feed", "MarketPlace", "My Orders"];
     const sellerArr = ["Feed", "My Market"];
-    if (User[0].customer_type == "Seller") setFinalArr(sellerArr);
-    else if (User[0].customer_type == "Buyer") setFinalArr(buyerArr);
+    if (User[0]?.customer_type == "Seller") setFinalArr(sellerArr);
+    else if (User[0]?.customer_type == "Buyer") setFinalArr(buyerArr);
   }, [User]);
 
   const [menus, setMenu] = useState(false);
@@ -170,7 +170,7 @@ const Main = () => {
             </Typography> */}
             <div style={{ position: "relative" }}>
               <span>
-                {User.name}&nbsp;
+                {User?.name}&nbsp;
                 <Avatar
                   sx={{
                     bgcolor: deepOrange[500],

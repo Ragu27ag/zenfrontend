@@ -15,9 +15,9 @@ import MyOrders from "./Pages/MyOrders";
 function App() {
   const theme = createTheme({
     palette: {
-      primary: { main: "#F5F7FA" },
+      primary: { main: "#1e3a8a" },
       secondary: { main: "#4b0dba" },
-      buttcolor: { main: "#2ed16c" },
+      buttcolor: { main: "#1e3a8a" },
       post: { main: "#FAFAFA" },
       // dark: { main: "#000" },
       // head: { main: "#555A8F" },

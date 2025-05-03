@@ -95,7 +95,7 @@ const Login = () => {
               fontWeight: 600,
               fontSize: "64px",
               letterSpacing: "1px",
-              color: "#2C3E50",
+              color: "#1e3a8a",
               margin: "10px",
             }}
           >
