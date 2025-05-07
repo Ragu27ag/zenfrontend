@@ -78,6 +78,7 @@ const Register = () => {
                   customer_type: custType,
                   proof_of_verification: url,
                   gender: gender_res.data.data?.isFemale && "Female",
+                  aadhaar_number: gender_res.data.data?.addhaar_number,
                 };
               } else {
                 setLoad(false);
@@ -114,6 +115,7 @@ const Register = () => {
         alert(error?.response?.data?.message);
         // document.getElementById("registerform").reset();
         document.getElementById("registerbutt").disabled = false;
+        window.location.reload();
       }
     },
     validationSchema: validation,

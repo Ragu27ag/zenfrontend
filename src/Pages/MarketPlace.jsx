@@ -66,7 +66,27 @@ const MarketPlace = () => {
   return (
     <>
       {" "}
-      <h1>Products</h1>
+      <div
+        style={{
+          backgroundImage: `url(${bags})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          // backgroundPosition: "center",
+        }}
+      >
+        <h1
+          style={{
+            fontFamily: "Poppins, sans-serif",
+            fontWeight: 600,
+            fontSize: "54px",
+            letterSpacing: "1px",
+            color: "#1e3a8a",
+            margin: "10px",
+          }}
+        >
+          Products
+        </h1>
+      </div>
       <TextField
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -92,9 +112,9 @@ const MarketPlace = () => {
           justifyContent: "space-around",
           borderRadius: "8px",
           // borrder: "1px solid red",
-          margin: "8%",
+          margin: "4%",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-          maxWidth: "70%",
+          maxWidth: "80%",
           backgroundImage: `url(${bags})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",

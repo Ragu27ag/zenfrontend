@@ -22,6 +22,7 @@ import Avatar from "@mui/material/Avatar";
 import logo from "../pics/Shopping Options.gif";
 import bags from "../pics/bags.jpg";
 import CreatePostForm from "./CreatePostForm.jsx";
+import gifyy from "../pics/Tracking Order Online.gif";
 
 const Feeds = () => {
   const User = useMemo(
@@ -225,36 +226,45 @@ const Feeds = () => {
         market_id={arr[0]?.market_id}
         user_id={User[0]?.user_id}
       />
-      <h6
-        style={{
-          fontFamily: "Poppins, sans-serif",
-          fontWeight: 600,
-          fontSize: "54px",
-          letterSpacing: "1px",
-          color: "#1e3a8a",
-          margin: "10px",
-        }}
-      >
-        Herfemora
-      </h6>
       <div
         style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "flex-end",
+          backgroundImage: `url(${bags})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          // backgroundPosition: "center",
         }}
       >
-        <Button
-          sx={{
-            backgroundColor: "buttcolor.main",
-            marginBottom: "15px",
+        <h6
+          style={{
+            fontFamily: "Poppins, sans-serif",
+            fontWeight: 600,
+            fontSize: "54px",
+            letterSpacing: "1px",
+            color: "#1e3a8a",
+            margin: "10px",
           }}
-          variant="contained"
-          startIcon={<AddCircleOutlineIcon />}
-          onClick={() => setOpenPost(true)}
         >
-          Post Something
-        </Button>
+          Herfemora
+        </h6>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            sx={{
+              backgroundColor: "buttcolor.main",
+              marginBottom: "15px",
+            }}
+            variant="contained"
+            startIcon={<AddCircleOutlineIcon />}
+            onClick={() => setOpenPost(true)}
+          >
+            Post Something
+          </Button>
+        </div>
       </div>
       <div
         className="main-div"
@@ -356,11 +366,9 @@ const Feeds = () => {
                   </p>
                   <div
                     style={{
-                      border: "2px solid black",
                       height: "350px",
                       margin: "5px",
                       borderRadius: "8px",
-                      border: "1px solid grey",
                     }}
                   >
                     {data.post_type == "Image" ? (
@@ -508,9 +516,26 @@ const Feeds = () => {
           </Box>
         </Box>
         <CommentBox arr={comment} open={open} handleClose={handleClose} />
-        <Box sx={{ width: "40%" }}>
+        <Box
+          sx={{
+            width: "40%",
+            backgroundImage: `url(${bags})`,
+            backgroundRepeat: "repeat-y",
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+          }}
+        >
           <img
             src={logo}
+            height={500}
+            width={500}
+            style={{
+              marginTop: "2px",
+            }}
+            alt="logo"
+          />
+          <img
+            src={gifyy}
             height={500}
             width={500}
             style={{

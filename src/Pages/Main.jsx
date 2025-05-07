@@ -154,7 +154,6 @@ const Main = () => {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <>
-        {" "}
         <AppBar position="fixed" open={open}>
           <Toolbar
             sx={{
@@ -248,7 +247,11 @@ const Main = () => {
             <ListItem
               key={text}
               disablePadding
-              sx={{ display: "block", marginBottom: "50px" }}
+              sx={{
+                display: "block",
+                marginBottom: "50px",
+                color: "secondary.main",
+              }}
             >
               <ListItemButton
                 onClick={() => handleRedirect(text)}
